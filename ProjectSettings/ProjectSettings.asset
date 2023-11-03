@@ -747,7 +747,7 @@ PlayerSettings:
     PS5: UNITY_POST_PROCESSING_STACK_V2
     QNX: UNITY_POST_PROCESSING_STACK_V2
     Stadia: PHOTON_UNITY_NETWORKING;PUN_2_0_OR_NEWER;PUN_2_OR_NEWER;PUN_2_19_OR_NEWER;UNITY_POST_PROCESSING_STACK_V2
-    Standalone: UNITY_POST_PROCESSING_STACK_V2
+    Standalone: UNITY_POST_PROCESSING_STACK_V2;FISHNET;FISHNET_V3
     VisionOS: UNITY_POST_PROCESSING_STACK_V2
     WebGL: UNITY_POST_PROCESSING_STACK_V2
     Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2;PHOTON_UNITY_NETWORKING;PUN_2_0_OR_NEWER;PUN_2_OR_NEWER;PUN_2_19_OR_NEWER;MOBILE_INPUT
@@ -868,10 +868,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 5d393687-d75b-45c6-bdac-9db6a1c68a46
+  cloudProjectId: f70283b6-e60c-407d-a85d-209ceeffcaa1
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Low Poly Zombie Shooter
+  projectName: GunBite Multiplayer
   organizationId: kuba219
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
