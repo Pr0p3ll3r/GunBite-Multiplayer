@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 508e60f8eeda556419c3b296abeabd27, type: 3}
+  m_Name: Glock-18
+  m_EditorClassIdentifier: 
+  itemName: Glock-18
+  itemType: 0
+  pickUp: {fileID: 0}
+  firingMode: 0
+  type: 1
+  prefab: {fileID: 4457205759843177867, guid: 7a4e2d5fca757474c8b66ad43975d689, type: 3}
+  damage: 25
+  ammo: 150
+  clipSize: 15
+  pellets: 0
+  pelletsSpread: 0
+  range: 0
+  fireRate: 0.5
+  bulletForce: 20
+  bulletPrefab: {fileID: 7127483739802894902, guid: 1a4b72cb174aa4e419805af6413a5fbe,
+    type: 3}
+  kickback: 0.1
+  movementSpeed: 0.5
+  reloadTime: 2.4
+  equipSound: {fileID: 8300000, guid: 75e9325a5b67cee41974de57e5125372, type: 3}
+  slideSound: {fileID: 0}
+  reloadSound: {fileID: 8300000, guid: 53bfa8dfccaac174e932c9e9c953a183, type: 3}
+  gunshotSound: {fileID: 8300000, guid: c84229c985eb3534a8e25896156c9562, type: 3}
+  pitchRandom: 0.05
+  shotVolume: 0.5
+  insert: 0
+  insertTime: 0
+  canBeSold: 0
+  canBeUpgraded: 1
+  startPrice: 0
+  upgradePrices: 96000000c8000000fa0000002c0100005e010000
+  damageMultiplier: 1.1
+  icon: {fileID: -4470421389789091768, guid: bba1196740eb42949afd5e4f2a426e2a, type: 3}
+  clipPrice: 10

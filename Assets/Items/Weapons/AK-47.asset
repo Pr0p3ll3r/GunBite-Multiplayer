@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 508e60f8eeda556419c3b296abeabd27, type: 3}
+  m_Name: AK-47
+  m_EditorClassIdentifier: 
+  itemName: AK-47
+  itemType: 0
+  pickUp: {fileID: 0}
+  firingMode: 1
+  type: 0
+  prefab: {fileID: 5519566046924677910, guid: fb860b7b8049b6f40bbd390d792031c1, type: 3}
+  damage: 25
+  ammo: 300
+  clipSize: 30
+  pellets: 0
+  pelletsSpread: 0
+  range: 0
+  fireRate: 0.16
+  bulletForce: 20
+  bulletPrefab: {fileID: 7127483739802894902, guid: 1a4b72cb174aa4e419805af6413a5fbe,
+    type: 3}
+  kickback: 0.06
+  movementSpeed: 0.5
+  reloadTime: 2.4
+  equipSound: {fileID: 8300000, guid: d6cde026d84d3f249be29e7913e50f88, type: 3}
+  slideSound: {fileID: 0}
+  reloadSound: {fileID: 8300000, guid: 5cbc0a42c05d9184d912d1308566356a, type: 3}
+  gunshotSound: {fileID: 8300000, guid: 7c2281521487bbd42b48542bbe6aa1a7, type: 3}
+  pitchRandom: 0
+  shotVolume: 0.5
+  insert: 0
+  insertTime: 0
+  canBeSold: 1
+  canBeUpgraded: 1
+  startPrice: 1000
+  upgradePrices: 2c01000090010000f401000058020000bc020000
+  damageMultiplier: 1.1
+  icon: {fileID: 21300000, guid: 3109a6f97d37e8a40a733139ec8d8fe0, type: 3}
+  clipPrice: 10

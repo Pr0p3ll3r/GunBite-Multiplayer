@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 508e60f8eeda556419c3b296abeabd27, type: 3}
+  m_Name: Shotgun
+  m_EditorClassIdentifier: 
+  itemName: Shotgun
+  itemType: 0
+  pickUp: {fileID: 0}
+  firingMode: 0
+  type: 0
+  prefab: {fileID: 9096870421357333932, guid: bb9635844ecdcdb44b8d10c4c959cbf8, type: 3}
+  damage: 8
+  ammo: 40
+  clipSize: 8
+  pellets: 10
+  pelletsSpread: 0.1
+  range: 0
+  fireRate: 1.2
+  bulletForce: 15
+  bulletPrefab: {fileID: 7127483739802894902, guid: 1a4b72cb174aa4e419805af6413a5fbe,
+    type: 3}
+  kickback: 0.3
+  movementSpeed: 0.5
+  reloadTime: 0.4
+  equipSound: {fileID: 8300000, guid: e4258834b58cd354e84e2b4668bfaf1e, type: 3}
+  slideSound: {fileID: 0}
+  reloadSound: {fileID: 8300000, guid: d841c407a121f1948a9856fd35ab9c88, type: 3}
+  gunshotSound: {fileID: 8300000, guid: 2a4ebf2823354e142b9bb7904446b4d0, type: 3}
+  pitchRandom: 0.1
+  shotVolume: 0.5
+  insert: 1
+  insertTime: 0.6
+  canBeSold: 1
+  canBeUpgraded: 1
+  startPrice: 250
+  upgradePrices: 96000000c8000000fa0000002c0100005e010000
+  damageMultiplier: 1.2
+  icon: {fileID: 21300000, guid: 7dabeb77268728d4eae7b9221a75cbfc, type: 3}
+  clipPrice: 20

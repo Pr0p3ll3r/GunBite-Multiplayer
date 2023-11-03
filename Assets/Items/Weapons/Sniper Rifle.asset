@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 508e60f8eeda556419c3b296abeabd27, type: 3}
+  m_Name: Sniper Rifle
+  m_EditorClassIdentifier: 
+  itemName: Sniper Rifle
+  itemType: 0
+  pickUp: {fileID: 0}
+  firingMode: 0
+  type: 0
+  prefab: {fileID: 8374691739552003825, guid: f04194effd30f934e9f1b6d2f4e03cef, type: 3}
+  damage: 75
+  ammo: 80
+  clipSize: 10
+  pellets: 0
+  pelletsSpread: 0
+  range: 0
+  fireRate: 1.5
+  bulletForce: 30
+  bulletPrefab: {fileID: 7127483739802894902, guid: 1a4b72cb174aa4e419805af6413a5fbe,
+    type: 3}
+  kickback: 0.05
+  movementSpeed: 0.5
+  reloadTime: 2.4
+  equipSound: {fileID: 8300000, guid: 2c09257fedb409440b32285a041a9841, type: 3}
+  slideSound: {fileID: 8300000, guid: 2c09257fedb409440b32285a041a9841, type: 3}
+  reloadSound: {fileID: 8300000, guid: dc5032c94a289524dbb22ee863c9a9e4, type: 3}
+  gunshotSound: {fileID: 8300000, guid: 2f7a2ea5d3609b1418d51085b2175633, type: 3}
+  pitchRandom: 0.1
+  shotVolume: 0.5
+  insert: 0
+  insertTime: 0.7
+  canBeSold: 1
+  canBeUpgraded: 1
+  startPrice: 1500
+  upgradePrices: c201000058020000ee020000840300001a040000
+  damageMultiplier: 1.2
+  icon: {fileID: 21300000, guid: 73531ee4bb9377c49904663b28e62672, type: 3}
+  clipPrice: 20

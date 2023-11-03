@@ -1,0 +1,447 @@
+fileFormatVersion: 2
+guid: 2a5f4da58c4e7b04c95ffd29a4dd76e4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5375774515142189891
+    second: Boss Plant Start-Sheet_0
+  - first:
+      213: 140434205238859814
+    second: Boss Plant Start-Sheet_1
+  - first:
+      213: 9058080027897504565
+    second: Boss Plant Start-Sheet_2
+  - first:
+      213: 6692307666201884387
+    second: Boss Plant Start-Sheet_3
+  - first:
+      213: -3665232944218611116
+    second: Boss Plant Start-Sheet_4
+  - first:
+      213: -6070728959180463179
+    second: Boss Plant Start-Sheet_5
+  - first:
+      213: 4427360198717540901
+    second: Boss Plant Start-Sheet_6
+  - first:
+      213: -4903742732023562726
+    second: Boss Plant Start-Sheet_7
+  - first:
+      213: 644813888145861589
+    second: Boss Plant Start-Sheet_8
+  - first:
+      213: -3082375478108579514
+    second: Boss Plant Start-Sheet_9
+  - first:
+      213: 4246056272597163100
+    second: Boss Plant Start-Sheet_10
+  - first:
+      213: -5868802533936569232
+    second: Boss Plant Start-Sheet_11
+  - first:
+      213: -6057559895608430405
+    second: Boss Plant Start-Sheet_12
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 8
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbc1a508f896565b0800000000000000
+      internalID: -5375774515142189891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62893956a2ce2f100800000000000000
+      internalID: 140434205238859814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53324e92bc3c4bd70800000000000000
+      internalID: 9058080027897504565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e636937d5adfdc50800000000000000
+      internalID: 6692307666201884387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4526ac47e0a722dc0800000000000000
+      internalID: -3665232944218611116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b32f5cfc2070cba0800000000000000
+      internalID: -6070728959180463179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52a0341c4a4217d30800000000000000
+      internalID: 4427360198717540901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1ef4d367f762fbb0800000000000000
+      internalID: -4903742732023562726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5db2c2d90d6d2f800800000000000000
+      internalID: 644813888145861589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64996f275d33935d0800000000000000
+      internalID: -3082375478108579514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5c1970fea50dea30800000000000000
+      internalID: 4246056272597163100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0746ccb8033dd8ea0800000000000000
+      internalID: -5868802533936569232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Plant Start-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 22
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb07b988e593feba0800000000000000
+      internalID: -6057559895608430405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Boss Plant Start-Sheet_2: 9058080027897504565
+      Boss Plant Start-Sheet_1: 140434205238859814
+      Boss Plant Start-Sheet_12: -6057559895608430405
+      Boss Plant Start-Sheet_11: -5868802533936569232
+      Boss Plant Start-Sheet_8: 644813888145861589
+      Boss Plant Start-Sheet_7: -4903742732023562726
+      Boss Plant Start-Sheet_3: 6692307666201884387
+      Boss Plant Start-Sheet_5: -6070728959180463179
+      Boss Plant Start-Sheet_6: 4427360198717540901
+      Boss Plant Start-Sheet_0: -5375774515142189891
+      Boss Plant Start-Sheet_10: 4246056272597163100
+      Boss Plant Start-Sheet_9: -3082375478108579514
+      Boss Plant Start-Sheet_4: -3665232944218611116
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
