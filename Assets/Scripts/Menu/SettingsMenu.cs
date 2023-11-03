@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
-public class OptionsMenu : MonoBehaviour
+public class SettingsMenu : MonoBehaviour
 {
 	[Header("MIXER")]
 	[SerializeField] private AudioMixer masterMixer;
@@ -14,8 +13,9 @@ public class OptionsMenu : MonoBehaviour
 	[SerializeField] private GameObject panelVideo;
 	[SerializeField] private GameObject panelGame;
 	[SerializeField] private GameObject panelAudio;
+    [SerializeField] private GameObject panelControls;
 
-	[Header("GAME SETTINGS")]
+    [Header("GAME SETTINGS")]
 	[SerializeField] private Toggle showFpsToggle;
 
 	[Header("VIDEO SETTINGS")]
@@ -150,29 +150,40 @@ public class OptionsMenu : MonoBehaviour
     #region Panels
     public void GamePanel()
 	{
-		panelVideo.SetActive(false);
-		panelGame.SetActive(true);
-		panelAudio.SetActive(false);
+		CloseAll();
+        panelGame.SetActive(true);
 	}
 
 	public void VideoPanel()
 	{
-		panelVideo.SetActive(true);
-		panelGame.SetActive(false);
-		panelAudio.SetActive(false);
-	}
+        CloseAll();
+        panelVideo.SetActive(true);
+    }
 
 	public void AudioPanel()
 	{
-		panelVideo.SetActive(false);
-		panelGame.SetActive(false);
-		panelAudio.SetActive(true);
+		CloseAll();
+        panelAudio.SetActive(true);
 	}
-	#endregion
 
-	#region PanelGame
+    public void ControlsPanel()
+    {
+		CloseAll();
+        panelControls.SetActive(true);
+    }
 
-	public void ShowFPS()
+	private void CloseAll()
+	{
+        panelVideo.SetActive(false);
+        panelGame.SetActive(false);
+        panelAudio.SetActive(false);
+		panelControls.SetActive(false);
+    }
+    #endregion
+
+    #region PanelGame
+
+    public void ShowFPS()
 	{
 		if (PlayerPrefs.GetInt("FPS") == 0)
 		{
