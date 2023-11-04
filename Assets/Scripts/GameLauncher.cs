@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Services.Authentication;
@@ -25,13 +26,13 @@ public class GameLauncher : MonoBehaviour
     [SerializeField] private GameObject lobbyListItemPrefab;
     [SerializeField] private Transform lobbyList;
     [SerializeField] private Button refreshButton;
-    [SerializeField] private Button createLobbyButton;
+    [SerializeField] private Button openCreateLobbyButton;
 
     [Header("Lobby Settings")]
     [SerializeField] private TMP_InputField lobbyNameInputField;
     [SerializeField] private TMP_Dropdown maxPlayersDropdown;
     [SerializeField] private TextMeshProUGUI warningTextLobby;
-    [SerializeField] private Button createButton;
+    [SerializeField] private Button createLobbyButton;
 
     private string lobbyName;
     private int maxPlayers;
@@ -45,6 +46,7 @@ public class GameLauncher : MonoBehaviour
     [SerializeField] private TextMeshProUGUI lobbyNameText;
     [SerializeField] private TextMeshProUGUI maxPlayersText;
     private int playersReady = 0;
+    private bool started = false;
 
     public string GetPlayerName()
     {
@@ -61,22 +63,28 @@ public class GameLauncher : MonoBehaviour
 
         connectButton.onClick.AddListener(Authenticate);
 
-        createLobbyButton.onClick.AddListener(() => {
+        openCreateLobbyButton.onClick.AddListener(() => {
             menuManager.OpenTab(menuManager.tabCreateLobby);
             DefaultSettings();
         });
-        refreshButton.onClick.AddListener(RefreshButtonClick);
+        refreshButton.onClick.AddListener(() => { 
+            LobbyManager.Instance.RefreshLobbyList();
+            StartCoroutine(DisableButton(refreshButton));
+        });
 
         maxPlayersDropdown.onValueChanged.AddListener(delegate {
             ChangeMaxPlayers(maxPlayersDropdown);
         });
-        createButton.onClick.AddListener(CreateLobby);
+        createLobbyButton.onClick.AddListener(CreateLobby);
         readyButton.onClick.AddListener(ReadyOnClick);
         leaveButton.onClick.AddListener(() => {
             LobbyManager.Instance.LeaveLobby();
+            StartCoroutine(DisableButton(leaveButton));
         });
         startButton.onClick.AddListener(() => {
+            started = true;
             LobbyManager.Instance.StartGame();
+            StartCoroutine(DisableButton(startButton, 3f));
         });
     }
 
@@ -87,6 +95,8 @@ public class GameLauncher : MonoBehaviour
             progressStatus.text = "Set username!";
             return;
         }
+        StartCoroutine(DisableButton(connectButton));
+        progressStatus.text = "Connecting";
         nickname = nicknameInputField.text;
         nicknameText.text = nickname;
         LobbyManager.Instance.Authenticate(GetPlayerName());
@@ -158,6 +168,8 @@ public class GameLauncher : MonoBehaviour
 
     private void UpdateLobby(Lobby lobby)
     {
+        if (started) return;
+
         ClearLobby();
         playersReady = 0;
         foreach (Unity.Services.Lobbies.Models.Player player in lobby.Players)
@@ -184,11 +196,6 @@ public class GameLauncher : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-    }
-
-    private void RefreshButtonClick()
-    {
-        LobbyManager.Instance.RefreshLobbyList();
     }
 
     private void StartTimer()
@@ -228,19 +235,26 @@ public class GameLauncher : MonoBehaviour
     {
         if (string.IsNullOrEmpty(lobbyNameInputField.text))
         {
-            warningTextLobby.text = "Set Lobby name!";
+            warningTextLobby.text = "Set lobby name!";
             return;
         }
 
-        Debug.Log("Creating Lobby");
+        Debug.Log("Creating lobby");
         warningTextLobby.text = "Creating lobby";
-
+        started = false;
         lobbyName = lobbyNameInputField.text;
-
         lobbyNameText.text = lobbyName;
-        maxPlayersText.text = maxPlayers.ToString();      
+        maxPlayersText.text = maxPlayers.ToString();
+        StartCoroutine(DisableButton(createLobbyButton));
         LobbyManager.Instance.CreateLobby(lobbyName, maxPlayers);
     }
+
+    private IEnumerator DisableButton(Button button, float time = 1f)
+    {
+        button.interactable = false;
+        yield return new WaitForSeconds(time);
+        button.interactable = true;
+    }    
 
     private void ReadyOnClick()
     {
@@ -258,6 +272,7 @@ public class GameLauncher : MonoBehaviour
             
            // leaveButton.interactable = true;
         }
+        StartCoroutine(DisableButton(readyButton));
     }
 
     private void ShowStartButton()

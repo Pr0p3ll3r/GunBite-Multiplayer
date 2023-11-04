@@ -112,7 +112,7 @@ public class LobbyManager : MonoBehaviour
                 {
                     if(!IsLobbyHost())
                     {
-                        //Join through relay
+                        RelayManager.Instance.JoinRelay(joinedLobby.Data[KEY_START_GAME].Value);
                     }
 
                     joinedLobby = null;
@@ -326,11 +326,12 @@ public class LobbyManager : MonoBehaviour
             //Debug.Log("UpdateLobbyStatus " + status);
 
             Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject>
                 {
-                    Data = new Dictionary<string, DataObject> {
                     { KEY_STATUS, new DataObject(DataObject.VisibilityOptions.Public, status) }
                 }
-                });
+            });
 
             joinedLobby = lobby;            
         }
@@ -342,10 +343,29 @@ public class LobbyManager : MonoBehaviour
 
     public async void StartGame()
     {
-        if(IsLobbyHost())
+        if (IsLobbyHost())
         {
-            UpdateLobbyStatus("");
-            //Start Game
+            try
+            {
+                Debug.Log("Start Game");
+
+                string relayCode = await RelayManager.Instance.CreateRelay();
+
+                Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                       { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
+                    }
+                });
+
+                joinedLobby = lobby;
+                UpdateLobbyStatus("IN GAME");
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
         }
     }
 }
