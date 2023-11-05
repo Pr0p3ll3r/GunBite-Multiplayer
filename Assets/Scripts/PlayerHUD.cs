@@ -13,25 +13,58 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Sprite shieldEmpty;
     [SerializeField] private Sprite emptyIcon;
     [SerializeField] private float fadeOutTime = 4f;
-    [SerializeField] private Image[] hearts;
-    [SerializeField] private GameObject armorBar;
-    [SerializeField] private Image[] shields;
-    [SerializeField] private SlicedFilledImage staminaBar;
-    [SerializeField] private TextMeshProUGUI clipSize;
-    [SerializeField] private TextMeshProUGUI ammo;
-    [SerializeField] private TextMeshProUGUI levelText;
-    [SerializeField] private SlicedFilledImage expBar;
-    [SerializeField] private TextMeshProUGUI moneyText;
-    [SerializeField] private GameObject vignette;
-    [SerializeField] private TextMeshProUGUI deadText;
-    [SerializeField] private Transform weaponParent;
+
+    [HideInInspector] public GameObject reloading;
+
+    private List<Image> hearts = new List<Image>();
+    private GameObject armorBar;
+    private Image[] shields;
+    private SlicedFilledImage staminaBar;
+    private TextMeshProUGUI ammo;
+    private TextMeshProUGUI levelText;
+    private SlicedFilledImage expBar;
+    private TextMeshProUGUI moneyText;
+    private GameObject vignette;
+    private TextMeshProUGUI deadText;
+    private Transform weaponParent;
 
     private void Awake()
     {
-        foreach (Image heart in hearts)
+        InitializeUI();
+    }
+
+    private void Start()
+    {
+        foreach (var heart in hearts)
         {
             heart.gameObject.SetActive(false);
         }
+    }
+
+    void InitializeUI()
+    {
+        //Bottom Left
+        moneyText = GameObject.Find("HUD/Game/BottomLeftCorner/Money").GetComponent<TextMeshProUGUI>();
+        hearts.AddRange(GameObject.Find("HUD/Game/BottomLeftCorner/HealthBar").GetComponentsInChildren<Image>());
+        armorBar = GameObject.Find("HUD/Game/BottomLeftCorner/ArmorBar");
+        shields = GameObject.Find("HUD/Game/BottomLeftCorner/ArmorBar").GetComponentsInChildren<Image>();
+
+        //Bottom Right   
+        ammo = GameObject.Find("HUD/Game/BottomRightCorner/Ammo/Amount").GetComponent<TextMeshProUGUI>();
+        weaponParent = GameObject.Find("HUD/Game/BottomRightCorner/Weapons").transform;
+
+        //Exp Bar
+        levelText = GameObject.Find("HUD/Game/ExpBar/LevelText").GetComponent<TextMeshProUGUI>();
+        expBar = GameObject.Find("HUD/Game/ExpBar/Bar").GetComponent<SlicedFilledImage>();
+
+        //Center
+        vignette = GameObject.Find("HUD/Game/Vignette").gameObject;
+        deadText = GameObject.Find("HUD/Game/DeadText").GetComponent<TextMeshProUGUI>();
+
+        //Others
+        reloading = gameObject.transform.Find("UI/Reloading").gameObject;
+        staminaBar = GameObject.Find("HUD/Game/StaminaBar/Bar").GetComponent<SlicedFilledImage>();
+        reloading.SetActive(false);
     }
 
     private IEnumerator FadeToZeroAlpha()
@@ -49,16 +82,15 @@ public class PlayerHUD : MonoBehaviour
     {
         //health
         //show heart containers
-        int amount = maxHealth % 2 == 0 ? maxHealth/2 : maxHealth/2 + 1;
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < maxHealth / 2; i++)
         {
             hearts[i].gameObject.SetActive(true);
         }
 
         //set sprite
-        for (int i = 0; i < hearts.Length; i++)
+        for (int i = 0; i < hearts.Count; i++)
         {
-            if (i < currentHealth/2)
+            if (i < currentHealth / 2)
             {
                 hearts[i].sprite = heartFull;
             }
@@ -70,11 +102,11 @@ public class PlayerHUD : MonoBehaviour
 
         if (currentHealth % 2 != 0)
         {
-            hearts[currentHealth/2].sprite = heartHalf;
+            hearts[currentHealth / 2].sprite = heartHalf;
         }
 
         //armor
-        if(currentArmor > 0)
+        if (currentArmor > 0)
         {
             armorBar.SetActive(true);
         }
@@ -85,7 +117,7 @@ public class PlayerHUD : MonoBehaviour
 
         for (int i = 0; i < shields.Length; i++)
         {
-            if(i < currentArmor)
+            if (i < currentArmor)
             {
                 shields[i].sprite = shieldFull;
             }
@@ -96,9 +128,8 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
-    public void RefreshAmmo(int clip, int currentAmmo)
-    {
-        clipSize.text = clip.ToString();
+    public void RefreshAmmo(int currentAmmo)
+    {;
         ammo.text = currentAmmo.ToString();
     }
 

@@ -1,9 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class BossPlant : ZombieInfo, IDamageable
+public class BossPlant : EnemyInfo, IDamageable
 {
     private Transform player;
     private Animator animator;
@@ -22,10 +21,10 @@ public class BossPlant : ZombieInfo, IDamageable
     private bool appear;
 
     private ObjectPooler acidPooler;
-   
+
     void Start()
     {
-        acidPooler = GameManager.Instance.plantAcidPooler;
+        //acidPooler = GameManager.Instance.plantAcidPooler;
         currentHealth = maxHealth;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         animator = GetComponent<Animator>();
@@ -115,11 +114,7 @@ public class BossPlant : ZombieInfo, IDamageable
         GetComponent<Collider2D>().enabled = false;
         hitbox.GetComponent<Collider2D>().enabled = false;
         transform.GetChild(2).gameObject.SetActive(false);
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.ZombieKilled();
-            GameManager.Instance.waveManager.ZombieKilled(-1);
-        }
+        if (GameManager.Instance != null) GameManager.Instance.EnemyKilled();
         StartCoroutine(Destroy(deathEffect.main.duration));
     }
 

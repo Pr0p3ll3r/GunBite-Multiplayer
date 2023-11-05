@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
+using FishNet.Object;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     public float moveSpeed = 10f;
 
-    [SerializeField] private Camera cam;
     [SerializeField] private Transform weaponParent;
     [SerializeField] private float stepRate;
     [SerializeField] private AudioSource footstepSource;
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private Player player;
     private SpriteRenderer spriteRenderer;
     private PlayerHUD hud;
+    private Camera cam;
 
     private void Start()
     {
@@ -35,10 +36,13 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         hud = GetComponent<PlayerHUD>();
         lastMove = new Vector2(1f, 0f);
+        cam = Camera.main;
     }
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         if (Pause.paused || player.isDead) return;
 
         //input
@@ -89,7 +93,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isDashing)
+        if (!IsOwner) return;
+
+        if (!isDashing)
             rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 

@@ -1,13 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class BossHead : ZombieInfo, IDamageable
+public class BossHead : EnemyInfo, IDamageable
 {
     [SerializeField] private ParticleSystem deathEffect;
 
-    private Transform player;    
+    private Transform player;
     private Animator animator;
     private GameObject healthBar;
     private TextMeshProUGUI moneyReward;
@@ -50,7 +49,6 @@ public class BossHead : ZombieInfo, IDamageable
         else
         {
             rb.isKinematic = false;
-
             animator.SetBool("Attack", false);
 
             Vector3 movePosition = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.fixedDeltaTime);
@@ -87,11 +85,7 @@ public class BossHead : ZombieInfo, IDamageable
                 GetComponent<SpriteRenderer>().enabled = false;
                 GetComponent<Collider2D>().enabled = false;
                 hitbox.GetComponent<Collider2D>().enabled = false;
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.ZombieKilled();
-                    GameManager.Instance.waveManager.ZombieKilled(-1);
-                }
+                if (GameManager.Instance != null) GameManager.Instance.EnemyKilled();
                 Multiply();
                 StartCoroutine(Destroy(deathEffect.main.duration));
             }
@@ -108,9 +102,9 @@ public class BossHead : ZombieInfo, IDamageable
 
     void Multiply()
     {
-        if(size > 0.5f)
+        if (size > 0.5f)
         {
-            for(int i=0;i<2;i++)
+            for (int i = 0; i < 2; i++)
             {
                 Vector3 position;
                 if (i == 1)
@@ -118,11 +112,9 @@ public class BossHead : ZombieInfo, IDamageable
                 else
                     position = transform.position;
 
-                GameObject clone = Instantiate(GameManager.Instance.waveManager.bigHeadPrefab, position, transform.rotation);
-                clone.GetComponent<BossHead>().SetSize(size - 0.5f, maxHealth/2, speed + 0.5f);
+                //GameObject clone = Instantiate(GameManager.Instance.waveManager.bigHeadPrefab, position, transform.rotation);
+                //clone.GetComponent<BossHead>().SetSize(size - 0.5f, maxHealth / 2, speed + 0.5f);
             }
-
-            GameManager.Instance.waveManager.ZombieKilled(2);
         }
     }
 

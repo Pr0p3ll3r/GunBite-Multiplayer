@@ -27,7 +27,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -123,6 +122,30 @@ MonoBehaviour:
     pitch: 0.8
     loop: 0
     audioSource: {fileID: 0}
+  - name: ZombieExtra
+    clip: {fileID: 8300000, guid: 66867292a7d6fd7448768ebfb46a99fe, type: 3}
+    mixer: {fileID: -6519579120896787049, guid: 562f33b73e73c5a4d906e62d245f849e,
+      type: 2}
+    volume: 1
+    pitch: 0.9
+    loop: 0
+    audioSource: {fileID: 0}
+  - name: PlayerDeathExtra
+    clip: {fileID: 8300000, guid: aca6b0664ed351a42aa8c5fbc2dc5c6d, type: 3}
+    mixer: {fileID: -6519579120896787049, guid: 562f33b73e73c5a4d906e62d245f849e,
+      type: 2}
+    volume: 1
+    pitch: 1
+    loop: 0
+    audioSource: {fileID: 0}
+  - name: Theme
+    clip: {fileID: 8300000, guid: 2cc76dc26002f824291dc56687a90d70, type: 3}
+    mixer: {fileID: -5118127153736826405, guid: 562f33b73e73c5a4d906e62d245f849e,
+      type: 2}
+    volume: 1
+    pitch: 1
+    loop: 1
+    audioSource: {fileID: 0}
   - name: Explosion
     clip: {fileID: 8300000, guid: f2507b2ded4a6f943be0eff7152d9a91, type: 3}
     mixer: {fileID: -6519579120896787049, guid: 562f33b73e73c5a4d906e62d245f849e,
@@ -141,14 +164,6 @@ MonoBehaviour:
     audioSource: {fileID: 0}
   - name: BossApear
     clip: {fileID: 8300000, guid: d97f7457c486e6c40af0c24d70f4cbfe, type: 3}
-    mixer: {fileID: -6519579120896787049, guid: 562f33b73e73c5a4d906e62d245f849e,
-      type: 2}
-    volume: 1
-    pitch: 1
-    loop: 0
-    audioSource: {fileID: 0}
-  - name: Pickup
-    clip: {fileID: 8300000, guid: 7178d6ab0bc55444e9d1397dffd2cdbc, type: 3}
     mixer: {fileID: -6519579120896787049, guid: 562f33b73e73c5a4d906e62d245f849e,
       type: 2}
     volume: 1

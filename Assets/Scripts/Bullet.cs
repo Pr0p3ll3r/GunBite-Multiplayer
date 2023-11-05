@@ -1,8 +1,10 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour, IPooledObject
+public class Bullet : NetworkBehaviour, IPooledObject
 {
+    //[SerializeField] private float lifeTime;
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private float radius = 10f;
 
@@ -12,6 +14,12 @@ public class Bullet : MonoBehaviour, IPooledObject
 
     public ObjectPooler Pool { get; set; }
 
+    private void Start()
+    {
+        //Destroy(gameObject, lifeTime);
+
+    }
+
     public void SetDamage(int amount, bool grenade)
     {
         damage = amount;
@@ -19,7 +27,7 @@ public class Bullet : MonoBehaviour, IPooledObject
         {
             isGrenade = true;
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        } 
+        }
         else isGrenade = false;
     }
 
@@ -33,7 +41,8 @@ public class Bullet : MonoBehaviour, IPooledObject
         {
             Detonate();
         }
-        Pool.ReturnToPool(gameObject);
+        //Pool.ReturnToPool(gameObject);
+        Despawn();
     }
 
     private void Update()
@@ -45,7 +54,8 @@ public class Bullet : MonoBehaviour, IPooledObject
             if (transform.position == mousePos)
             {
                 Detonate();
-                Pool.ReturnToPool(gameObject);
+                //Pool.ReturnToPool(gameObject);
+                Despawn();
             }
         }
     }

@@ -3591,7 +3591,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Options
+  m_text: Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 040466a75f433ff4b85b163cc52852f3, type: 2}
   m_sharedMaterial: {fileID: -8709763942859980820, guid: 040466a75f433ff4b85b163cc52852f3,
@@ -8982,7 +8982,7 @@ GameObject:
   - component: {fileID: 1728329369}
   - component: {fileID: 1728329368}
   m_Layer: 5
-  m_Name: ButtonOptions
+  m_Name: ButtonSettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11512,11 +11512,11 @@ MonoBehaviour:
   tabSettings: {fileID: 4229172157689915510}
   tabAbout: {fileID: 1924590434}
   tabLoading: {fileID: 704620460}
-  playButton: {fileID: 313636953}
-  optionsButton: {fileID: 1728329368}
+  loadingText: {fileID: 88174964}
+  findLobbyButton: {fileID: 313636953}
+  settingsButton: {fileID: 1728329368}
   aboutButton: {fileID: 301810281}
-  quitGameMainButton: {fileID: 971228773}
-  quitGameConnectButton: {fileID: 1628797849}
+  quitGameButton: {fileID: 971228773}
 --- !u!1001 &99376019776225908
 PrefabInstance:
   m_ObjectHideFlags: 0

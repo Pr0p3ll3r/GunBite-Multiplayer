@@ -4,10 +4,10 @@ using UnityEngine.UI;
 
 public class LevelSystem : MonoBehaviour
 {
-    [SerializeField] private int requireExp = 60;
-    [SerializeField] private int level;
-    [SerializeField] private int exp;
-    [SerializeField] private GameObject upgradeUI;
+    private int requireExp = 60;
+    public int level;
+    public int exp;
+    public GameObject upgradeUI;
     [SerializeField] private Button healthUpgrade;
     [SerializeField] private Button speedUpgrade;
     [SerializeField] private Button dashPowerUpgrade;
@@ -16,20 +16,18 @@ public class LevelSystem : MonoBehaviour
     private PlayerHUD hud;
     private int upgrade = 0;
     private bool chosen = false;
-    private Player player;
-    private PlayerController controller;
+    Player player;
 
     private void Start()
     {
         hud = GetComponent<PlayerHUD>();
         player = Player.Instance;
-        controller = GetComponent<PlayerController>();
         hud.UpdateLevel(level, exp, requireExp);
-        upgradeUI.SetActive(false);
-        healthUpgrade.onClick.AddListener(delegate { UpgradeHealth(); });
-        speedUpgrade.onClick.AddListener(delegate { UpgradeSpeed(); });
-        dashPowerUpgrade.onClick.AddListener(delegate { UpgradeDashPower(); });
-        dashCooldownUpgrade.onClick.AddListener(delegate { UpgradeDashCooldown(); });
+        //upgradeUI.SetActive(false);
+        //healthUpgrade.onClick.AddListener(delegate { UpgradeHealth(); });
+        //speedUpgrade.onClick.AddListener(delegate { UpgradeSpeed(); });
+        //dashPowerUpgrade.onClick.AddListener(delegate { UpgradeDashPower(); });
+        //dashCooldownUpgrade.onClick.AddListener(delegate { UpgradeDashCooldown(); });
     }
 
     public void GetExp(int amount)
@@ -43,11 +41,10 @@ public class LevelSystem : MonoBehaviour
     {
         if (exp >= requireExp)
         {
-            exp = exp - requireExp;
+            exp -= requireExp;
             requireExp += 30;
             level++;
-            if(level < 26)
-                upgrade++;
+            upgrade++;
             CheckLevelUp();
         }
 
@@ -57,63 +54,55 @@ public class LevelSystem : MonoBehaviour
     IEnumerator ChooseUpgrade()
     {
         upgradeUI.SetActive(true);
-        yield return new WaitUntil (() => chosen);
+        yield return new WaitUntil(() => chosen);
         chosen = false;
         upgradeUI.SetActive(false);
         if (TimeToUpgrade() == true)
             StartCoroutine(ChooseUpgrade());
-        else
-        {
-            Player.Instance.Control(true);
-            GameManager.Instance.TimerStatus(true);
-            GameManager.Instance.isShopTime = true;
-            Shop.Instance.shopText.text = "Press F to open the Shop";
-        }         
     }
 
     public bool TimeToUpgrade()
     {
-        if(upgrade > 0)
+        if (upgrade > 0)
         {
             upgrade--;
             Player.Instance.Control(false);
-            GameManager.Instance.TimerStatus(false);
             StartCoroutine(ChooseUpgrade());
             return true;
         }
-        return false;    
+        return false;
     }
 
     void UpgradeHealth()
-    {       
+    {
+
         chosen = true;
         player.maxHealth += 1;
         hud.RefreshBars(player.currentHealth, player.maxHealth, player.currentArmor);
-        if (player.maxHealth == 10)
+        player.RefillHealth();
+        if (player.maxHealth == 20)
             healthUpgrade.gameObject.SetActive(false);
     }
 
     void UpgradeSpeed()
     {
         chosen = true;
-        controller.moveSpeed += 1;
-        if (controller.moveSpeed == 10)
-            speedUpgrade.gameObject.SetActive(false);
+        player.GetComponent<PlayerController>().moveSpeed += 1;
     }
 
     void UpgradeDashPower()
     {
         chosen = true;
-        controller.dashDistance += 10;
-        if (controller.dashDistance == 100)
+        player.GetComponent<PlayerController>().dashDistance += 10;
+        if (player.GetComponent<PlayerController>().dashDistance == 100)
             dashPowerUpgrade.gameObject.SetActive(false);
     }
 
     void UpgradeDashCooldown()
     {
         chosen = true;
-        controller.dashCooldown -= 1;
-        if (controller.dashCooldown == 1)
+        player.GetComponent<PlayerController>().dashDistance -= 1;
+        if (player.GetComponent<PlayerController>().dashCooldown == 1)
             dashCooldownUpgrade.gameObject.SetActive(false);
     }
 }

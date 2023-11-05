@@ -1,13 +1,26 @@
 ﻿using UnityEngine;
+using System.Collections;
+using FishNet.Object;
+using TMPro;
+using FishNet.Object.Synchronizing;
 
-public class Player : MonoBehaviour, IDamageable
+public class Player : NetworkBehaviour, IDamageable
 {
     public static Player Instance { get; private set; }
 
+    [SyncVar]
     public int maxHealth = 4;
     public int currentHealth;
-    public int currentArmor = 0;
+    public int currentArmor;
     public bool isDead;
+    [SerializeField] private AudioSource hurtSource;
+    [SerializeField] private AudioClip hurtSound;
+    [SerializeField] private AudioClip deathSound;
+    private GameManager gameManager;
+    private WeaponManager wm;
+    private PlayerController playerController;
+    public TextMeshPro playerNickname;
+
     public bool invincible;
     [SerializeField] private GameObject deathEffect;
     private PlayerHUD hud;
@@ -17,37 +30,54 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        Instance = this;
-    }
-
-    void Start()
-    {
         hud = GetComponent<PlayerHUD>();
         ls = GetComponent<LevelSystem>();
         ms = GetComponent<MoneySystem>();
         animator = GetComponent<Animator>();
+    }
+
+    void Start()
+    {
+        playerController = GetComponent<PlayerController>();
+        hud = GetComponent<PlayerHUD>();
+        wm = GetComponent<WeaponManager>();
+        ls = GetComponent<LevelSystem>();
+        ms = GetComponent<MoneySystem>();
         currentHealth = maxHealth;
         hud.RefreshBars(currentHealth, maxHealth, currentArmor);
     }
 
     void Update()
     {
-        #if UNITY_EDITOR
+        if (!IsOwner) return;
+
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.T))
         {
             TakeDamage(1);
         }
-        #endif
+#endif
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!IsOwner) return;
+
+        Instance = this;
+        Camera.main.GetComponent<CameraFollow>().SetPlayer(transform);
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDead == false && invincible == false)
+        if (isDead || invincible) return;
+        hurtSource.PlayOneShot(hurtSound);
+        if (IsOwner)
         {
             invincible = true;
             SoundManager.Instance.Play("PlayerHurt");
             animator.SetTrigger("GetHit");
-
             hud.ShowVignette();
 
             if (currentArmor > 0)
@@ -63,12 +93,14 @@ public class Player : MonoBehaviour, IDamageable
 
             if (currentHealth <= 0)
             {
+                StartCoroutine(Destroy());
                 Die();
             }
-        }   
+        }
     }
-    
-    public void Die()
+
+    [ObserversRpc]
+    void Die()
     {
         if (PlayerPrefs.GetInt("Extra") == 1)
             SoundManager.Instance.Play("PlayerDeathExtra");
@@ -77,8 +109,14 @@ public class Player : MonoBehaviour, IDamageable
         isDead = true;
         Instantiate(deathEffect, transform.position, Quaternion.identity);
         hud.ShowDeadText();
-        GameManager.Instance.Gameover();
+        hurtSource.PlayOneShot(deathSound);
         Destroy(gameObject);
+    }
+
+    IEnumerator Destroy()
+    {
+        yield return new WaitForSeconds(5f);
+        Despawn();
     }
 
     public void Reward(int exp, int money)
@@ -102,24 +140,5 @@ public class Player : MonoBehaviour, IDamageable
     public void DisableInvincible()
     {
         invincible = false;
-    }
-
-    public void Pickup(GameObject sceneObject)
-    {
-        bool pickedUp = false;
-        Item newItem = sceneObject.GetComponent<ItemPickup>().item;
-        if (currentHealth < maxHealth)
-        {
-            currentHealth++;
-            hud.RefreshBars(currentHealth, maxHealth, currentArmor);
-            pickedUp = true;
-        }
-                  
-        if (pickedUp)
-        {
-            Debug.Log("Picked up " + newItem.itemName);
-            SoundManager.Instance.PlayOneShot("Pickup");
-            Destroy(sceneObject);
-        }
     }
 }

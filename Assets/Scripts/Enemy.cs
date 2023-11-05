@@ -1,9 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using FishNet.Object;
 
-public class Zombie : ZombieInfo, IDamageable
+public class Zombie : EnemyInfo, IDamageable
 {
     private int currentHealth;
 
@@ -18,6 +18,7 @@ public class Zombie : ZombieInfo, IDamageable
 
     [SerializeField] private Transform spitPoint;
     private ObjectPooler acidPooler;
+    [SerializeField] private GameObject acidPrefab;
 
     [SerializeField] private ParticleSystem explodeEffect;
     [SerializeField] private float radius;
@@ -27,9 +28,8 @@ public class Zombie : ZombieInfo, IDamageable
 
     void Start()
     {
-        acidPooler = GameManager.Instance.acidPooler;
+        //acidPooler = GameManager.Instance.acidPooler;
         currentHealth = maxHealth;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         healthBar = transform.GetChild(0).transform.Find("HealthBar").gameObject;
@@ -40,6 +40,11 @@ public class Zombie : ZombieInfo, IDamageable
 
     private void Update()
     {
+        if (!IsServer) return;
+
+        if (GetClosestPlayer() != null)
+            player = GetClosestPlayer().transform;
+
         if (isDead || player == null)
         {
             return;
@@ -56,6 +61,7 @@ public class Zombie : ZombieInfo, IDamageable
         {
             sprite.flipX = true;
         }
+
     }
 
     private void FixedUpdate()
@@ -76,17 +82,35 @@ public class Zombie : ZombieInfo, IDamageable
             rb.isKinematic = false;
 
             animator.SetBool("Attack", false);
-
             Vector3 movePosition = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.fixedDeltaTime);
-
             rb.MovePosition(movePosition);
         }
+    }
 
+    GameObject GetClosestPlayer()
+    {
+        Vector3 position = transform.position;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject closestPlayer = null;
+        float minimumDistance = 1000000f;
+
+        foreach (GameObject player in players)
+        {
+            float distanceToPlayer = Vector2.Distance(position, player.transform.position);
+
+            if (distanceToPlayer < minimumDistance)
+            {
+                closestPlayer = player;
+                minimumDistance = distanceToPlayer;
+            }
+        }
+
+        return closestPlayer;
     }
 
     void Attack()
     {
-        if(Time.time - lastAttackTime >= attackCooldown)
+        if (Time.time - lastAttackTime >= attackCooldown)
         {
             animator.SetBool("Attack", true);
             lastAttackTime = Time.time;
@@ -96,32 +120,30 @@ public class Zombie : ZombieInfo, IDamageable
                 Vector2 direction = (player.position - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-                GameObject acid = acidPooler.Get();
-                acid.transform.position = spitPoint.position;
-                acid.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-                acid.SetActive(true);
+                GameObject acid = Instantiate(acidPrefab, spitPoint.transform.position, Quaternion.Euler(new Vector3(0, 0, angle)));
+                Spawn(acid);
             }
             else
             {
                 player.GetComponent<Player>().TakeDamage(1);
             }
-        }         
-    }
-
-    public void TakeDamage(int damage)
-    {
-        if (isDead == false)
-        {
-            currentHealth -= damage;
-            SoundManager.Instance.Play("ZombieHurt");
-            SetHealthBar();
-            if (currentHealth <= 0)
-            {
-                Die();
-            }
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return;
+        currentHealth -= damage;
+        SoundManager.Instance.Play("ZombieHurt");
+        SetHealthBar();
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    [ObserversRpc]
     public virtual void Die()
     {
         isDead = true;
@@ -131,11 +153,7 @@ public class Zombie : ZombieInfo, IDamageable
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
         hitbox.GetComponent<Collider2D>().enabled = false;
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.ZombieKilled();
-            GameManager.Instance.waveManager.ZombieKilled(-1);
-        }
+        if (GameManager.Instance != null) GameManager.Instance.EnemyKilled();
         if (type == Type.Boomer) Explode();
         else
         {
@@ -175,11 +193,14 @@ public class Zombie : ZombieInfo, IDamageable
 
     void Drop()
     {
-        List<Item> droppedItems = Loot.Drop(loot);
-        foreach(Item item in droppedItems)
+        foreach (LootItem lootItem in loot)
         {
-            GameObject sceneObject = Instantiate(item.pickUp, transform.position, transform.rotation);
-            sceneObject.GetComponent<ItemPickup>().item = item;
+            if (Loot.Drop(lootItem, lootItem.chanceToDrop))
+            {
+                GameObject sceneObject = Instantiate(lootItem.item.pickUp, transform.position, transform.rotation);
+                sceneObject.GetComponent<ItemPickup>().item = lootItem.item;
+                break;
+            }
         }
     }
 

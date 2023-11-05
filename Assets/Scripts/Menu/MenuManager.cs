@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,6 +6,7 @@ public class MenuManager : MonoBehaviour
 {
     public static MenuManager Instance { get; private set; }
 
+    [Header("Tabs")]
     public GameObject tabConnect;
     public GameObject tabMain;
     public GameObject tabLobbies;
@@ -12,30 +14,31 @@ public class MenuManager : MonoBehaviour
     public GameObject tabLobby;
     public GameObject tabSettings;
     public GameObject tabAbout;
-    public GameObject tabLoading;
 
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button optionsButton;
+    [Header("Loading")]
+    public GameObject tabLoading;
+    [SerializeField] private TextMeshProUGUI loadingText;
+
+    [Header("MainTab")]
+    [SerializeField] private Button findLobbyButton;
+    [SerializeField] private Button settingsButton;
     [SerializeField] private Button aboutButton;
-    [SerializeField] private Button quitGameMainButton;
-    [SerializeField] private Button quitGameConnectButton;
+    [SerializeField] private Button quitGameButton;
 
     private void Awake()
     {
         Instance = this;
 
-        playButton.onClick.AddListener(() =>
-        {
+        findLobbyButton.onClick.AddListener(() => {
             OpenTab(tabLobbies);
         });
-        optionsButton.onClick.AddListener(() => {
+        settingsButton.onClick.AddListener(() => {
             OpenTab(tabSettings);
         });
         aboutButton.onClick.AddListener(() => {
             OpenTab(tabAbout);
         });
-        quitGameMainButton.onClick.AddListener(QuitGame);
-        quitGameConnectButton.onClick.AddListener(QuitGame);
+        quitGameButton.onClick.AddListener(QuitGame);
     }
 
     private void Start()
@@ -62,9 +65,10 @@ public class MenuManager : MonoBehaviour
         tab.GetComponent<Animator>().enabled = true;
     }
 
-    public void LoadingBox()
+    public void LoadingBox(string text)
     {
         TabCloseAll();
+        loadingText.text = text;
         tabLoading.SetActive(true);
     }
 

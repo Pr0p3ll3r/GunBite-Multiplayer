@@ -4,20 +4,23 @@ using System.Collections;
 using UnityEngine.UI;
 using TMPro;
 using System.Globalization;
+using FishNet.Object;
 
-public class WeaponManager : MonoBehaviour
+public class WeaponManager : NetworkBehaviour
 {
     public Weapon[] loadout;
-    private GameObject currentWeapon;
-    [SerializeField] private Transform weaponHolder;
+    public ObjectPooler bulletPooler;
+    public GameObject currentWeapon;
+    public Transform weaponHolder;
     public int selectedWeapon = 0;
-    private Weapon currentWeaponData;
+    public Weapon currentWeaponData;
 
-    [SerializeField] private AudioSource sfx;
-    [SerializeField] private AudioSource weaponSound;
+    public GameObject emptyCase;
+    public AudioSource sfx;
+    public AudioSource weaponSound;
     public bool isReloading = false;
-    private bool isEquipping = false;
-    [SerializeField] private GameObject reloading;
+    public bool isEquipping = false;
+    [SerializeField] private GameObject bulletPrefab;
 
     private float currentCooldown;
     private PlayerHUD hud;
@@ -34,16 +37,18 @@ public class WeaponManager : MonoBehaviour
         hud = GetComponent<PlayerHUD>();
         foreach (Weapon weapon in loadout)
         {
-            if(weapon != null)
+            if (weapon != null)
                 weapon.Initialize();
         }
-        reloading.SetActive(false);
+
         equip = StartCoroutine(Equip(1));
         hud.RefreshWeapon(loadout);
     }
 
     void Update()
     {
+        if (!IsOwner) return;
+
         if (Pause.paused || GetComponent<Player>().isDead) return;
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && loadout[0] != null && selectedWeapon != 0)
@@ -52,7 +57,7 @@ public class WeaponManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2) && loadout[1] != null && selectedWeapon != 1)
             equip = StartCoroutine(Equip(1));
 
-        if (Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null && selectedWeapon != 2 )
+        if (Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null && selectedWeapon != 2)
             equip = StartCoroutine(Equip(2));
 
         if (currentWeapon != null)
@@ -77,15 +82,23 @@ public class WeaponManager : MonoBehaviour
                     {
                         if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && isReloading == false)
                         {
-                            if (loadout[selectedWeapon].FireBullet()) Shoot();
+                            if (loadout[selectedWeapon].FireBullet())
+                            {
+                                ServerShoot();
+                                currentCooldown = currentWeaponData.fireRate;
+                            }
                             else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
                         }
                     }
-                    else if(loadout[selectedWeapon].firingMode == 2)
+                    else if (loadout[selectedWeapon].firingMode == 2)
                     {
                         if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && isReloading == false)
                         {
-                            if (loadout[selectedWeapon].FireBurst()) StartCoroutine(Burst());
+                            if (loadout[selectedWeapon].FireBurst())
+                            {
+                                StartCoroutine(Burst());
+                                currentCooldown = currentWeaponData.fireRate;
+                            }
                             else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
                         }
                     }
@@ -93,7 +106,11 @@ public class WeaponManager : MonoBehaviour
                     {
                         if (Input.GetMouseButton(0) && currentCooldown <= 0 && isReloading == false)
                         {
-                            if (loadout[selectedWeapon].FireBullet()) Shoot();
+                            if (loadout[selectedWeapon].FireBullet())
+                            {
+                                ServerShoot();
+                                currentCooldown = currentWeaponData.fireRate;
+                            }
                             else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
                         }
                     }
@@ -101,7 +118,7 @@ public class WeaponManager : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.R)) if (currentWeaponData.OutOfAmmo() && isReloading == false) reload = StartCoroutine(Reload());
 
                     if (Input.GetKeyDown(KeyCode.E)) StartCoroutine(QuickAttack());
-                }              
+                }
             }
         }
     }
@@ -123,7 +140,7 @@ public class WeaponManager : MonoBehaviour
             {
                 StopCoroutine(reload);
                 StopCoroutine(reloadHud);
-                reloading.SetActive(false);
+                hud.reloading.SetActive(false);
             }
             if (muzzle != null) StopCoroutine(muzzle);
             if (equip != null) StopCoroutine(equip);
@@ -143,9 +160,9 @@ public class WeaponManager : MonoBehaviour
             weaponSound.Play();
         }
 
-        hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
+        hud.RefreshAmmo(currentWeaponData.GetAmmo());
         if (currentWeapon.GetComponent<Animator>() != null)
-            if (currentWeapon.GetComponent<Animator>().HasState(0, Animator.StringToHash("Equip"))) 
+            if (currentWeapon.GetComponent<Animator>().HasState(0, Animator.StringToHash("Equip")))
                 currentWeapon.GetComponent<Animator>().Play("Equip", 0, 0);
 
         hud.SelectWeapon(selectedWeapon);
@@ -154,9 +171,51 @@ public class WeaponManager : MonoBehaviour
         isEquipping = false;
     }
 
-    void Shoot()
+    [ServerRpc]
+    void ServerShoot()
     {
-        hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
+        hud.RefreshAmmo(currentWeaponData.GetAmmo());
+
+        //firepoint
+        Transform firePoint = currentWeapon.transform.Find("FirePoint").transform;
+
+        for (int i = 0; i < Mathf.Max(1, currentWeaponData.pellets); i++)
+        {
+            GameObject bullet = Instantiate(bulletPrefab);
+            if (currentWeaponData.itemName.Contains("Grenade"))
+                bullet.GetComponent<Bullet>().SetDamage(currentWeaponData.GetDamage(), true);
+            else
+                bullet.GetComponent<Bullet>().SetDamage(currentWeaponData.GetDamage(), false);
+            bullet.transform.position = firePoint.position;
+            bullet.transform.rotation = firePoint.rotation;
+            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+            rb.velocity = Vector2.zero;
+            bullet.SetActive(true);
+            Spawn(bullet);
+
+            if (currentWeaponData.pellets == 0)
+            {
+                rb.AddForce(firePoint.right * currentWeaponData.bulletForce, ForceMode2D.Impulse);
+            }
+            else
+            {
+                float maxSpread = currentWeaponData.pelletsSpread;
+
+                Vector3 direction = firePoint.right + new Vector3(Random.Range(-maxSpread, maxSpread), Random.Range(-maxSpread, maxSpread), Random.Range(-maxSpread, maxSpread));
+                rb.AddForce(direction * currentWeaponData.bulletForce, ForceMode2D.Impulse);
+            }
+        }
+
+        RpcShoot();
+    }
+
+    [ObserversRpc]
+    void RpcShoot()
+    {
+        //animation
+        if (currentWeapon.GetComponent<Animator>() != null)
+            if (currentWeapon.GetComponent<Animator>().HasState(0, Animator.StringToHash("Shoot")))
+                currentWeapon.GetComponent<Animator>().Play("Shoot", 0, 0);
 
         //sfx
         sfx.clip = currentWeaponData.gunshotSound;
@@ -175,45 +234,8 @@ public class WeaponManager : MonoBehaviour
         SpriteRenderer muzzleFlash = currentWeapon.transform.Find("MuzzleFlash").GetComponent<SpriteRenderer>();
         muzzle = StartCoroutine(MuzzleFlash(muzzleFlash));
 
-        //firepoint
-        Transform firePoint = currentWeapon.transform.Find("FirePoint").transform;
-
-        //animation
-        if(currentWeapon.GetComponent<Animator>() != null)
-            if (currentWeapon.GetComponent<Animator>().HasState(0, Animator.StringToHash("Shoot")))
-                currentWeapon.GetComponent<Animator>().Play("Shoot", 0, 0);
-
-        for (int i = 0; i < Mathf.Max(1, currentWeaponData.pellets); i++)
-        {
-            GameObject bullet = GameManager.Instance.bulletPooler.Get();
-            if (currentWeaponData.itemName.Contains("Grenade"))
-                bullet.GetComponent<Bullet>().SetDamage(currentWeaponData.GetDamage(), true);
-            else
-                bullet.GetComponent<Bullet>().SetDamage(currentWeaponData.GetDamage(), false);
-            bullet.transform.position = firePoint.position;
-            bullet.transform.rotation = firePoint.rotation;
-            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            rb.velocity = Vector2.zero;
-            bullet.SetActive(true);
-
-            if (currentWeaponData.pellets == 0)
-            {              
-                rb.AddForce(firePoint.right * currentWeaponData.bulletForce, ForceMode2D.Impulse);
-            }
-            else
-            {
-                float maxSpread = currentWeaponData.pelletsSpread;
-
-                Vector3 direction = firePoint.right + new Vector3(Random.Range(-maxSpread, maxSpread), Random.Range(-maxSpread, maxSpread), Random.Range(-maxSpread, maxSpread));              
-                rb.AddForce(direction * currentWeaponData.bulletForce, ForceMode2D.Impulse);
-            }
-        }
-
         //gun fx
         currentWeapon.transform.position -= currentWeapon.transform.right * currentWeaponData.kickback;
-
-        //cooldown
-        currentCooldown = currentWeaponData.fireRate;
     }
 
     void Attack()
@@ -230,7 +252,7 @@ public class WeaponManager : MonoBehaviour
         Transform attackPoint = currentWeapon.transform.Find("AttackPoint").transform;
 
         Collider2D[] enemies = Physics2D.OverlapCircleAll(attackPoint.position, currentWeaponData.range);
-        foreach(Collider2D enemy in enemies)
+        foreach (Collider2D enemy in enemies)
         {
             if (enemy.gameObject.layer == LayerMask.NameToLayer("EnemyHitbox"))
             {
@@ -265,12 +287,12 @@ public class WeaponManager : MonoBehaviour
                 {
                     isReloading = false;
                     StopCoroutine(reload);
-                }   
+                }
                 reloadHud = StartCoroutine(ReloadingCircle(currentWeaponData.insertTime));
                 weaponSound.PlayOneShot(currentWeaponData.reloadSound);
                 yield return new WaitForSeconds(currentWeaponData.insertTime);
                 currentWeaponData.Reload();
-                hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
+                hud.RefreshAmmo(currentWeaponData.GetAmmo());
             }
             while (currentWeaponData.GetClip() != currentWeaponData.clipSize);
         }
@@ -282,7 +304,7 @@ public class WeaponManager : MonoBehaviour
             weaponSound.Play();
             yield return new WaitForSeconds(currentWeaponData.reloadTime);
             currentWeaponData.Reload();
-            hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
+            hud.RefreshAmmo(currentWeaponData.GetAmmo()); 
             yield return new WaitForSeconds(0.2f);
         }
 
@@ -293,7 +315,7 @@ public class WeaponManager : MonoBehaviour
     {
         muzzle.enabled = true;
 
-        for(int i = 0; i < 1; i++)
+        for (int i = 0; i < 1; i++)
         {
             yield return new WaitForSeconds(0.1f);
         }
@@ -321,7 +343,7 @@ public class WeaponManager : MonoBehaviour
         newWeapon.transform.localPosition = loadout[2].prefab.transform.localPosition;
         weaponPosition = newWeapon.transform.localPosition;
 
-        hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
+        hud.RefreshAmmo(currentWeaponData.GetAmmo());
 
         hud.SelectWeapon(selectedWeapon);
 
@@ -340,7 +362,7 @@ public class WeaponManager : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
         {
-            Shoot();
+            ServerShoot();
 
             yield return new WaitForSeconds(0.11f);
         }
@@ -350,6 +372,7 @@ public class WeaponManager : MonoBehaviour
 
     IEnumerator ReloadingCircle(float time)
     {
+        GameObject reloading = hud.reloading;
         float reloadTime = time;
         Image reloadingCircle = reloading.GetComponentInChildren<Image>();
         TextMeshProUGUI reloadTimeText = reloading.GetComponentInChildren<TextMeshProUGUI>();
@@ -383,16 +406,15 @@ public class WeaponManager : MonoBehaviour
                     {
                         pickedUp = true;
                         currentWeaponData.AddMag();
-                        hud.RefreshAmmo(currentWeaponData.GetClip(), currentWeaponData.GetAmmo());
-                    }                   
-                }                             
+                        hud.RefreshAmmo(currentWeaponData.GetAmmo());
+                    }
+                }
                 break;
         }
 
         if (pickedUp)
         {
             Debug.Log("Picked up " + newItem.itemName);
-            SoundManager.Instance.PlayOneShot("Pickup");
             Destroy(sceneObject);
         }
     }
