@@ -27,14 +27,7 @@ public class Player : NetworkBehaviour, IDamageable
     private LevelSystem ls;
     private MoneySystem ms;
     private Animator animator;
-
-    private void Awake()
-    {
-        hud = GetComponent<PlayerHUD>();
-        ls = GetComponent<LevelSystem>();
-        ms = GetComponent<MoneySystem>();
-        animator = GetComponent<Animator>();
-    }
+    private Pause pause;
 
     void Start()
     {
@@ -43,6 +36,8 @@ public class Player : NetworkBehaviour, IDamageable
         wm = GetComponent<WeaponManager>();
         ls = GetComponent<LevelSystem>();
         ms = GetComponent<MoneySystem>();
+        animator = GetComponent<Animator>();
+        pause = GameObject.Find("Pause").GetComponent<Pause>();
         currentHealth = maxHealth;
         hud.RefreshBars(currentHealth, maxHealth, currentArmor);
     }
@@ -50,6 +45,9 @@ public class Player : NetworkBehaviour, IDamageable
     void Update()
     {
         if (!IsOwner) return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            pause.TooglePause();
 
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.T))
