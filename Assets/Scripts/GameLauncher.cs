@@ -58,9 +58,6 @@ public class GameLauncher : MonoBehaviour
         menuManager = GetComponent<MenuManager>();
         menuManager.OpenTab(menuManager.tabConnect);
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         connectButton.onClick.AddListener(Authenticate);
 
         openCreateLobbyButton.onClick.AddListener(() => {
@@ -92,10 +89,12 @@ public class GameLauncher : MonoBehaviour
     {
         if (string.IsNullOrEmpty(nicknameInputField.text))
         {
+            progressStatus.color = new Color32(255, 23, 23, 255);
             progressStatus.text = "Set username!";
             return;
         }
         StartCoroutine(DisableButton(connectButton));
+        progressStatus.color = new Color32(255, 255, 55, 255);
         progressStatus.text = "Connecting";
         nickname = nicknameInputField.text;
         nicknameText.text = nickname;
@@ -205,8 +204,6 @@ public class GameLauncher : MonoBehaviour
         //chatManager.StartCounting();
     }
 
-    #region LobbySettings
-
     private void DefaultSettings()
     {
         lobbyNameInputField.text = "";
@@ -218,10 +215,6 @@ public class GameLauncher : MonoBehaviour
     {
         maxPlayers = byte.Parse(change.options[change.value].text);
     }
-
-    #endregion
-
-    #region Buttons
 
     private void LogOut()
     {      
@@ -262,15 +255,11 @@ public class GameLauncher : MonoBehaviour
         {
             LobbyManager.Instance.UpdatePlayerReady("true");
             readyButton.GetComponent<Image>().color = Color.green;
-            
-            //leaveButton.interactable = false;
         }
         else if (readyButton.GetComponent<Image>().color == Color.green)
         {
             LobbyManager.Instance.UpdatePlayerReady("false");
             readyButton.GetComponent<Image>().color = Color.red;
-            
-           // leaveButton.interactable = true;
         }
         StartCoroutine(DisableButton(readyButton));
     }
@@ -282,5 +271,4 @@ public class GameLauncher : MonoBehaviour
         else
             startButton.gameObject.SetActive(false);
     }
-    #endregion
 }
