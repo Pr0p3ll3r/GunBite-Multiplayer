@@ -65,10 +65,16 @@ public class PlayerController : NetworkBehaviour
 
         //player flip
         if (movement.x < 0)
+        {
             spriteRenderer.flipX = true;
+            ServerFlipPlayerSprite(true);
+        }    
         else if (movement.x > 0)
+        {
             spriteRenderer.flipX = false;
-
+            ServerFlipPlayerSprite(false);
+        }
+            
         //weapon look at mouse position
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
         Vector2 aimDirection = (mousePos - weaponParent.position).normalized;
@@ -97,6 +103,18 @@ public class PlayerController : NetworkBehaviour
 
         if (!isDashing)
             rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    [ObserversRpc]
+    private void RpcFlipPlayerSprite(bool status)
+    {
+        spriteRenderer.flipX = status;
+    }
+
+    [ServerRpc]
+    private void ServerFlipPlayerSprite(bool status)
+    {
+        RpcFlipPlayerSprite(status);
     }
 
     private void PlayFootStepAudio()

@@ -37,7 +37,7 @@ public class Player : NetworkBehaviour, IDamageable
         ls = GetComponent<LevelSystem>();
         ms = GetComponent<MoneySystem>();
         animator = GetComponent<Animator>();
-        pause = GameObject.Find("Pause").GetComponent<Pause>();
+        pause = GameObject.Find("HUD/PauseMenu").GetComponent<Pause>();
         currentHealth = maxHealth;
         hud.RefreshBars(currentHealth, maxHealth, currentArmor);
     }

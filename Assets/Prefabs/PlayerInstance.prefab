@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8683503100124455442}
-  - component: {fileID: 8707019181049771697}
   - component: {fileID: 1350340237555143656}
   m_Layer: 0
   m_Name: PlayerInstance
@@ -33,26 +32,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8707019181049771697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 718376377147293127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c766c94879aa6a047825e590ee2252dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 1350340237555143656}
-  _networkObjectCache: {fileID: 0}
-  isReady: 0
-  nickname: 
-  controlledPlayer: {fileID: 0}
-  playerPrefab: {fileID: 3546874242085294830, guid: 4feab2a2ff7ca2f4bb6ac208bc51103b,
-    type: 3}
 --- !u!114 &1350340237555143656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,8 +52,8 @@ MonoBehaviour:
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    LocalScale: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
   _isGlobal: 0
   _initializeOrder: 0
