@@ -19,11 +19,12 @@ public class MenuManager : MonoBehaviour
     public GameObject tabLoading;
     [SerializeField] private TextMeshProUGUI loadingText;
 
-    [Header("MainTab")]
+    [Header("Buttons")]
     [SerializeField] private Button findLobbyButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button aboutButton;
-    [SerializeField] private Button quitGameButton;
+    [SerializeField] private Button mainQuitGameButton;
+    [SerializeField] private Button connectQuitGameButton;
 
     private void Awake()
     {
@@ -38,12 +39,8 @@ public class MenuManager : MonoBehaviour
         aboutButton.onClick.AddListener(() => {
             OpenTab(tabAbout);
         });
-        quitGameButton.onClick.AddListener(QuitGame);
-    }
-
-    private void Start()
-    {
-        OpenTab(tabConnect);
+        mainQuitGameButton.onClick.AddListener(QuitGame);
+        connectQuitGameButton.onClick.AddListener(QuitGame);
     }
 
     private void TabCloseAll()

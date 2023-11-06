@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class OnPointerHover : MonoBehaviour, IPointerEnterHandler
+public class ButtonSound : MonoBehaviour, IPointerEnterHandler
 {
     private void Start()
     {
-        Button[] buttons = gameObject.GetComponentsInChildren<Button>();
+        Button[] buttons = gameObject.GetComponentsInChildren<Button>(true);
 
         foreach(Button b in buttons)
         {

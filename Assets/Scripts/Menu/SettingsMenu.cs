@@ -17,8 +17,9 @@ public class SettingsMenu : MonoBehaviour
 
     [Header("GAME SETTINGS")]
 	[SerializeField] private Toggle showFpsToggle;
+    [SerializeField] private Toggle autoAimToggle;
 
-	[Header("VIDEO SETTINGS")]
+    [Header("VIDEO SETTINGS")]
 	[SerializeField] private Toggle fullscreenToggle;
 	[SerializeField] private Toggle vsyncToggle;
 	[SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -27,22 +28,9 @@ public class SettingsMenu : MonoBehaviour
 	private List<string> Options = new List<string>();
 
 	[Header("AUDIO SETTINGS")]
-	[SerializeField] private GameObject musicSlider;
-	[SerializeField] private GameObject sfxSlider;
-	[SerializeField] private GameObject uiSlider;
-
-    private void Awake()
-    {
-        if (PlayerPrefs.GetInt("FirstRun") == 0)
-        {
-			PlayerPrefs.SetInt("FirstRun", 1);
-			PlayerPrefs.SetInt("FPS", 0);
-			PlayerPrefs.SetInt("Extra", 0);
-			PlayerPrefs.SetFloat("Music", 0.5f);
-			PlayerPrefs.SetFloat("SFX", 0.5f);
-			PlayerPrefs.SetFloat("UI", 0.5f);
-		}
-    }
+	[SerializeField] private Slider musicSlider;
+	[SerializeField] private Slider sfxSlider;
+	[SerializeField] private Slider uiSlider;
 
     public void Start()
 	{
@@ -63,8 +51,7 @@ public class SettingsMenu : MonoBehaviour
 				lw = res.width;
 				lh = res.height;
 
-				if (lw == Screen.currentResolution.width &&
-				lh == Screen.currentResolution.height)
+				if (lw == Screen.currentResolution.width && lh == Screen.currentResolution.height)
 				{
 					currentResolutionIndex = x;
 				}
@@ -79,7 +66,6 @@ public class SettingsMenu : MonoBehaviour
 
         #region PlayerPrefs
 
-        //check resolution
         if (PlayerPrefs.HasKey("Resolution"))
 		{
 			int resolutionIndex = PlayerPrefs.GetInt("Resolution");
@@ -91,82 +77,54 @@ public class SettingsMenu : MonoBehaviour
 			resolutionDropdown.value = resolutionIndex;
 		}
 
-		// check full screen
-		if (Screen.fullScreen == true)
-		{
-			fullscreenToggle.isOn = true;
-		}
-		else if (Screen.fullScreen == false)
-		{
-			fullscreenToggle.isOn = false;
-		}
+        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", 0) == 1;
+        fullscreenToggle.isOn = isFullscreen;
 
-		if (PlayerPrefs.HasKey("Music"))
-		{
-			float volume;
-			volume = PlayerPrefs.GetFloat("Music");
-			masterMixer.SetFloat("musicVolume", volume);
-			musicSlider.GetComponent<Slider>().value = volume;
-		}
+        float musicVolume = PlayerPrefs.GetFloat("Music", 0.5f);
+        masterMixer.SetFloat("musicVolume", Mathf.Log10(musicVolume) * 20);
+        musicSlider.value = musicVolume;
 
-		if (PlayerPrefs.HasKey("SFX"))
-		{
-			float volume;
-			volume = PlayerPrefs.GetFloat("SFX");
-			masterMixer.SetFloat("sfxVolume", volume);
-			sfxSlider.GetComponent<Slider>().value = volume;
-		}
+        float sfxVolume = PlayerPrefs.GetFloat("SFX", 0.5f);
+        masterMixer.SetFloat("sfxVolume", Mathf.Log10(sfxVolume) * 20);
+        sfxSlider.value = sfxVolume;
 
-		if (PlayerPrefs.HasKey("UI"))
-		{
-			float volume;
-			volume = PlayerPrefs.GetFloat("UI");
-			masterMixer.SetFloat("uiVolume", volume);
-			uiSlider.GetComponent<Slider>().value = volume;
-		}
+        float uiVolume = PlayerPrefs.GetFloat("UI", 0.5f);
+        masterMixer.SetFloat("uiVolume", Mathf.Log10(uiVolume) * 20);
+        uiSlider.value = uiVolume;
 
-		//check fps value
-		if (PlayerPrefs.GetInt("FPS") == 0)
-		{
-			showFpsToggle.SetIsOnWithoutNotify(false);
-		}
-		else
-		{
-			showFpsToggle.SetIsOnWithoutNotify(true);
-		}
+        bool showFPS = PlayerPrefs.GetInt("FPS", 0) == 1;
+        showFpsToggle.isOn = showFPS;
 
-		// check vsync
-		if (QualitySettings.vSyncCount == 0)
-		{
-			fullscreenToggle.SetIsOnWithoutNotify(false);
-		}
-		else if (QualitySettings.vSyncCount == 1)
-		{
-			fullscreenToggle.SetIsOnWithoutNotify(true);
-		}
+        bool isVSync = PlayerPrefs.GetInt("VSync", 1) == 1;
+        vsyncToggle.isOn = isVSync;
+        QualitySettings.vSyncCount = isVSync ? 1 : 0;
+
+        bool autoaim = PlayerPrefs.GetInt("AutoAim", 0) == 1;
+        showFpsToggle.isOn = autoaim;
+
         #endregion
     }
 
     #region Panels
-    public void GamePanel()
+    public void OpenGamePanel()
 	{
 		CloseAll();
         panelGame.SetActive(true);
 	}
 
-	public void VideoPanel()
+    public void OpenVideoPanel()
 	{
         CloseAll();
         panelVideo.SetActive(true);
     }
 
-	public void AudioPanel()
+    public void OpenAudioPanel()
 	{
 		CloseAll();
         panelAudio.SetActive(true);
 	}
 
-    public void ControlsPanel()
+    public void OpenControlsPanel()
     {
 		CloseAll();
         panelControls.SetActive(true);
@@ -183,29 +141,25 @@ public class SettingsMenu : MonoBehaviour
 
     #region PanelGame
 
-    public void ShowFPS()
+    public void ShowFPS(bool showFPS)
 	{
-		if (PlayerPrefs.GetInt("FPS") == 0)
-		{
-			PlayerPrefs.SetInt("FPS", 1);
-			showFpsToggle.SetIsOnWithoutNotify(true);
-		}
-		else if (PlayerPrefs.GetInt("FPS") == 1)
-		{
-			PlayerPrefs.SetInt("FPS", 0);
-			showFpsToggle.SetIsOnWithoutNotify(false);
-		}
-	}
+        PlayerPrefs.SetInt("FPS", showFPS ? 1 : 0);
+    }
 
-	#endregion
+    public void AutoAim(bool isOn)
+    {
+        PlayerPrefs.SetInt("AutoAim", isOn ? 1 : 0);
+    }
 
-	#region PanelVideo
+    #endregion
 
-	public void FullScreen()
+    #region PanelVideo
+
+    public void FullScreen(bool isFullscreen)
 	{
-		Screen.fullScreen = !Screen.fullScreen;
+        Screen.fullScreen = isFullscreen;
 
-		fullscreenToggle.SetIsOnWithoutNotify(!Screen.fullScreen);
+        PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
 	}
 
 	public void SetResolution(int resolutionIndex)
@@ -218,60 +172,34 @@ public class SettingsMenu : MonoBehaviour
 		PlayerPrefs.SetInt("Resolution", resolutionIndex);
 	}
 
-	public void SetQuality(int qualityIndex)
+	public void Vsync(bool isVsync)
 	{
-		QualitySettings.SetQualityLevel(qualityIndex);
-		PlayerPrefs.SetInt("Quality", qualityIndex);
-	}
+        QualitySettings.vSyncCount = isVsync ? 1 : 0;
 
-	public void Vsync()
-	{
-		if (QualitySettings.vSyncCount == 0)
-		{
-			QualitySettings.vSyncCount = 1;
-			vsyncToggle.SetIsOnWithoutNotify(true);
-		}
-		else if (QualitySettings.vSyncCount == 1)
-		{
-			QualitySettings.vSyncCount = 0;
-			vsyncToggle.SetIsOnWithoutNotify(false);
-		}
-	}
+        PlayerPrefs.SetInt("VSync", isVsync ? 1 : 0);
+    }
 
 	#endregion
 
 	#region PanelAudio
 
-	public void SetMusicVolume()
+	public void SetMusicVolume(float volume)
     {
-		float volume = musicSlider.GetComponent<Slider>().value;
         masterMixer.SetFloat("musicVolume", Mathf.Log10(volume) * 20);
 		PlayerPrefs.SetFloat("Music", volume);
     }
 
-    public void SetSFXVolume()
+    public void SetSFXVolume(float volume)
     {
-		float volume = sfxSlider.GetComponent<Slider>().value;
 		masterMixer.SetFloat("sfxVolume", Mathf.Log10(volume) * 20);
 		PlayerPrefs.SetFloat("SFX", volume);
     }
 
-    public void SetUIVolume()
+    public void SetUIVolume(float volume)
     {
-		float volume = uiSlider.GetComponent<Slider>().value;
 		masterMixer.SetFloat("uiVolume", Mathf.Log10(volume) * 20);
         PlayerPrefs.SetFloat("UI", volume);
     }
 
     #endregion
-
-	public void PlayClick()
-	{
-		SoundManager.Instance.PlayOneShot("Click");
-	}
-
-	public void PlayHover()
-	{
-		SoundManager.Instance.Play("Hover");
-	}
 }
