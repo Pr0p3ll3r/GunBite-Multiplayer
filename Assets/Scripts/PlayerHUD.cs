@@ -7,18 +7,13 @@ using System.Collections.Generic;
 public class PlayerHUD : MonoBehaviour
 {
     [SerializeField] private Sprite heartFull;
-    [SerializeField] private Sprite heartHalf;
     [SerializeField] private Sprite heartEmpty;
-    [SerializeField] private Sprite shieldFull;
-    [SerializeField] private Sprite shieldEmpty;
     [SerializeField] private Sprite emptyIcon;
     [SerializeField] private float fadeOutTime = 4f;
 
     [HideInInspector] public GameObject reloading;
 
     private List<Image> hearts = new List<Image>();
-    private GameObject armorBar;
-    private Image[] shields;
     private SlicedFilledImage staminaBar;
     private TextMeshProUGUI ammo;
     private TextMeshProUGUI levelText;
@@ -32,21 +27,11 @@ public class PlayerHUD : MonoBehaviour
         InitializeUI();
     }
 
-    private void Start()
-    {
-        foreach (var heart in hearts)
-        {
-            heart.gameObject.SetActive(false);
-        }
-    }
-
     void InitializeUI()
     {
         //Bottom Left
         moneyText = GameObject.Find("HUD/Game/BottomLeftCorner/Money").GetComponent<TextMeshProUGUI>();
         hearts.AddRange(GameObject.Find("HUD/Game/BottomLeftCorner/HealthBar").GetComponentsInChildren<Image>());
-        armorBar = GameObject.Find("HUD/Game/BottomLeftCorner/ArmorBar");
-        shields = GameObject.Find("HUD/Game/BottomLeftCorner/ArmorBar").GetComponentsInChildren<Image>();
 
         //Bottom Right   
         ammo = GameObject.Find("HUD/Game/BottomRightCorner/Ammo/Amount").GetComponent<TextMeshProUGUI>();
@@ -76,52 +61,27 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
-    public void RefreshBars(int currentHealth, int maxHealth, int currentArmor)
+    public void RefreshBars(int currentHealth, int maxHealth)
     {
-        //health
-        //show heart containers
-        for (int i = 0; i < maxHealth / 2; i++)
+        foreach (var heart in hearts)
+        {
+            heart.gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < maxHealth; i++)
         {
             hearts[i].gameObject.SetActive(true);
         }
 
-        //set sprite
         for (int i = 0; i < hearts.Count; i++)
         {
-            if (i < currentHealth / 2)
+            if (i < currentHealth)
             {
                 hearts[i].sprite = heartFull;
             }
             else
             {
                 hearts[i].sprite = heartEmpty;
-            }
-        }
-
-        if (currentHealth % 2 != 0)
-        {
-            hearts[currentHealth / 2].sprite = heartHalf;
-        }
-
-        //armor
-        if (currentArmor > 0)
-        {
-            armorBar.SetActive(true);
-        }
-        else
-        {
-            armorBar.SetActive(false);
-        }
-
-        for (int i = 0; i < shields.Length; i++)
-        {
-            if (i < currentArmor)
-            {
-                shields[i].sprite = shieldFull;
-            }
-            else
-            {
-                shields[i].sprite = shieldEmpty;
             }
         }
     }

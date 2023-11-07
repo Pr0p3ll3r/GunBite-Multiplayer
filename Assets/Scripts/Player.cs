@@ -11,7 +11,6 @@ public class Player : NetworkBehaviour, IDamageable
     [SyncVar]
     public int maxHealth = 4;
     public int currentHealth;
-    public int currentArmor;
 
     private bool isDead;
     public bool IsDead => isDead;
@@ -42,7 +41,7 @@ public class Player : NetworkBehaviour, IDamageable
         animator = GetComponent<Animator>();
         pause = GameObject.Find("HUD/PauseMenu").GetComponent<Pause>();
         currentHealth = maxHealth;
-        hud.RefreshBars(currentHealth, maxHealth, currentArmor);
+        hud.RefreshBars(currentHealth, maxHealth);
         autoAim = PlayerPrefs.GetInt("AutoAim", 1) == 1;
     }
 
@@ -82,16 +81,9 @@ public class Player : NetworkBehaviour, IDamageable
             animator.SetTrigger("GetHit");
             hud.ShowVignette();
 
-            if (currentArmor > 0)
-            {
-                currentArmor -= 1;
-            }
-            else
-            {
-                currentHealth -= 1;
-            }
+            currentHealth -= 1;
 
-            hud.RefreshBars(currentHealth, maxHealth, currentArmor);
+            hud.RefreshBars(currentHealth, maxHealth);
 
             if (currentHealth <= 0)
             {
@@ -127,7 +119,7 @@ public class Player : NetworkBehaviour, IDamageable
     public void RefillHealth()
     {
         currentHealth = maxHealth;
-        hud.RefreshBars(currentHealth, maxHealth, currentArmor);
+        hud.RefreshBars(currentHealth, maxHealth);
     }
 
     public void Control(bool status)

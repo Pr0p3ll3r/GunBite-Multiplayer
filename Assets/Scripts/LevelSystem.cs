@@ -78,7 +78,7 @@ public class LevelSystem : MonoBehaviour
 
         chosen = true;
         player.maxHealth += 1;
-        hud.RefreshBars(player.currentHealth, player.maxHealth, player.currentArmor);
+        hud.RefreshBars(player.currentHealth, player.maxHealth);
         player.RefillHealth();
         if (player.maxHealth == 20)
             healthUpgrade.gameObject.SetActive(false);
