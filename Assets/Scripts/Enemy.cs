@@ -5,26 +5,24 @@ using FishNet.Object;
 
 public class Zombie : EnemyInfo, IDamageable
 {
+    [SerializeField] private ParticleSystem deathEffect;
+    [SerializeField] private Transform spitPoint;
+    [SerializeField] private GameObject acidPrefab;
+    [SerializeField] private ParticleSystem explodeEffect;
+    [SerializeField] private float radius;
+
     private int currentHealth;
+    private float lastAttackTime = 0;
+    private bool isDead;
 
     private Transform player;
-    [SerializeField] private ParticleSystem deathEffect;
     private Animator animator;
     private GameObject healthBar;
     private TextMeshProUGUI moneyReward;
     private SpriteRenderer sprite;
     private GameObject hitbox;
     private Rigidbody2D rb;
-
-    [SerializeField] private Transform spitPoint;
     private ObjectPooler acidPooler;
-    [SerializeField] private GameObject acidPrefab;
-
-    [SerializeField] private ParticleSystem explodeEffect;
-    [SerializeField] private float radius;
-
-    private float lastAttackTime = 0;
-    private bool isDead;
 
     void Start()
     {
@@ -61,7 +59,6 @@ public class Zombie : EnemyInfo, IDamageable
         {
             sprite.flipX = true;
         }
-
     }
 
     private void FixedUpdate()

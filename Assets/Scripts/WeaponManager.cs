@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
@@ -8,57 +7,46 @@ using FishNet.Object;
 
 public class WeaponManager : NetworkBehaviour
 {
-    public Weapon[] loadout;
-    public ObjectPooler bulletPooler;
-    public GameObject currentWeapon;
-    public Transform weaponHolder;
-    public int selectedWeapon = 0;
-    public Weapon currentWeaponData;
-
-    public GameObject emptyCase;
-    public AudioSource sfx;
-    public AudioSource weaponSound;
+    [SerializeField] private Weapon[] loadout;
+    [SerializeField] private ObjectPooler bulletPooler;
+    [SerializeField] private GameObject currentWeapon;
+    [SerializeField] private Transform weaponHolder;
+    [SerializeField] private int selectedWeapon = 0;
+    [SerializeField] private Weapon currentWeaponData;
+    [SerializeField] private AudioSource sfx;
+    [SerializeField] private AudioSource weaponSound;
     public bool isReloading = false;
     public bool isEquipping = false;
     [SerializeField] private GameObject bulletPrefab;
 
     private float currentCooldown;
     private PlayerHUD hud;
+    private Player player;
     private Vector3 weaponPosition;
-
+    private PlayerController controller;
     private Coroutine muzzle;
     private Coroutine equip;
     private Coroutine reloadHud;
     private Coroutine reload;
     private bool burst;
+    private GameObject closestEnemy;
+    public GameObject ClosestEnemy => closestEnemy;
 
     private void Start()
     {
+        player = GetComponent<Player>();
         hud = GetComponent<PlayerHUD>();
-        foreach (Weapon weapon in loadout)
-        {
-            if (weapon != null)
-                weapon.Initialize();
-        }
-
-        equip = StartCoroutine(Equip(1));
-        hud.RefreshWeapon(loadout);
+        controller = GetComponent<PlayerController>();
+        equip = StartCoroutine(Equip(0));
     }
 
     void Update()
     {
         if (!IsOwner) return;
 
-        if (Pause.paused || GetComponent<Player>().isDead) return;
+        closestEnemy = GetClosestEnemy();
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) && loadout[0] != null && selectedWeapon != 0)
-            equip = StartCoroutine(Equip(0));
-
-        if (Input.GetKeyDown(KeyCode.Alpha2) && loadout[1] != null && selectedWeapon != 1)
-            equip = StartCoroutine(Equip(1));
-
-        if (Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null && selectedWeapon != 2)
-            equip = StartCoroutine(Equip(2));
+        if (Pause.paused || GetComponent<Player>().IsDead) return;
 
         if (currentWeapon != null)
         {
@@ -67,58 +55,38 @@ public class WeaponManager : NetworkBehaviour
             if (currentWeapon.transform.localPosition != weaponPosition)
                 currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, weaponPosition, Time.deltaTime * 4f);
 
-            if (!isEquipping)
+            if (!isEquipping && currentCooldown <= 0 && !isReloading)
             {
-                if (loadout[selectedWeapon].type == 2)
+                if (currentWeaponData.OutOfAmmo())
+                    reload = StartCoroutine(Reload());
+                else if (player.autoAim)
                 {
-                    if (Input.GetMouseButtonDown(0) && currentCooldown <= 0)
+                    if (closestEnemy)
                     {
-                        Attack();
+                        Shoot();
                     }
                 }
                 else
                 {
-                    if (loadout[selectedWeapon].firingMode == 0)
+
+                    if (currentWeaponData.firingMode == 1)
                     {
-                        if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && isReloading == false)
+                        if (Input.GetMouseButton(0))
                         {
-                            if (loadout[selectedWeapon].FireBullet())
-                            {
-                                ServerShoot();
-                                currentCooldown = currentWeaponData.fireRate;
-                            }
-                            else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
-                        }
-                    }
-                    else if (loadout[selectedWeapon].firingMode == 2)
-                    {
-                        if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && isReloading == false)
-                        {
-                            if (loadout[selectedWeapon].FireBurst())
-                            {
-                                StartCoroutine(Burst());
-                                currentCooldown = currentWeaponData.fireRate;
-                            }
-                            else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
+                            Shoot();
                         }
                     }
                     else
                     {
-                        if (Input.GetMouseButton(0) && currentCooldown <= 0 && isReloading == false)
+                        if (Input.GetMouseButtonDown(0))
                         {
-                            if (loadout[selectedWeapon].FireBullet())
-                            {
-                                ServerShoot();
-                                currentCooldown = currentWeaponData.fireRate;
-                            }
-                            else if (currentWeaponData.OutOfAmmo()) reload = StartCoroutine(Reload());
+                            Shoot();
                         }
                     }
-
-                    if (Input.GetKeyDown(KeyCode.R)) if (currentWeaponData.OutOfAmmo() && isReloading == false) reload = StartCoroutine(Reload());
-
-                    if (Input.GetKeyDown(KeyCode.E)) StartCoroutine(QuickAttack());
                 }
+
+                if (Input.GetKeyDown(KeyCode.R))
+                    if (!currentWeaponData.FullAmmo() && !isReloading) reload = StartCoroutine(Reload());
             }
         }
     }
@@ -130,7 +98,7 @@ public class WeaponManager : NetworkBehaviour
         isEquipping = true;
 
         selectedWeapon = index;
-        currentWeaponData = loadout[selectedWeapon];
+        currentWeaponData = (Weapon)loadout[selectedWeapon].GetCopy();
 
         SoundManager.Instance.Play("Equip");
 
@@ -149,7 +117,7 @@ public class WeaponManager : NetworkBehaviour
             Destroy(currentWeapon);
         }
 
-        GameObject newWeapon = Instantiate(loadout[index].prefab, weaponHolder) as GameObject;
+        GameObject newWeapon = Instantiate(loadout[index].prefab, weaponHolder);
         currentWeapon = newWeapon;
         newWeapon.transform.localPosition = loadout[index].prefab.transform.localPosition;
         weaponPosition = newWeapon.transform.localPosition;
@@ -161,21 +129,24 @@ public class WeaponManager : NetworkBehaviour
         }
 
         hud.RefreshAmmo(currentWeaponData.GetAmmo());
-        if (currentWeapon.GetComponent<Animator>() != null)
-            if (currentWeapon.GetComponent<Animator>().HasState(0, Animator.StringToHash("Equip")))
-                currentWeapon.GetComponent<Animator>().Play("Equip", 0, 0);
-
-        hud.SelectWeapon(selectedWeapon);
 
         yield return new WaitForSeconds(1f);
         isEquipping = false;
     }
 
+    private void Shoot()
+    {
+        if (currentWeaponData.FireBullet())
+        {
+            ServerShoot();
+            currentCooldown = currentWeaponData.fireRate;
+            hud.RefreshAmmo(currentWeaponData.GetAmmo());
+        }
+    }
+
     [ServerRpc]
     void ServerShoot()
     {
-        hud.RefreshAmmo(currentWeaponData.GetAmmo());
-
         //firepoint
         Transform firePoint = currentWeapon.transform.Find("FirePoint").transform;
 
@@ -223,13 +194,6 @@ public class WeaponManager : NetworkBehaviour
         sfx.volume = currentWeaponData.shotVolume;
         sfx.PlayOneShot(sfx.clip);
 
-        //slide sound
-        if (currentWeaponData.slideSound != null)
-        {
-            sfx.clip = currentWeaponData.slideSound;
-            sfx.PlayOneShot(sfx.clip);
-        }
-
         //muzzle
         SpriteRenderer muzzleFlash = currentWeapon.transform.Find("MuzzleFlash").GetComponent<SpriteRenderer>();
         muzzle = StartCoroutine(MuzzleFlash(muzzleFlash));
@@ -238,30 +202,24 @@ public class WeaponManager : NetworkBehaviour
         currentWeapon.transform.position -= currentWeapon.transform.right * currentWeaponData.kickback;
     }
 
-    void Attack()
+    private GameObject GetClosestEnemy()
     {
-        //sfx
-        sfx.clip = currentWeaponData.gunshotSound;
-        sfx.volume = currentWeaponData.shotVolume;
-        sfx.PlayOneShot(sfx.clip);
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentWeaponData.range, LayerMask.GetMask("Enemy"));
+        GameObject closestEnemy = null;
+        float minimumDistance = 1000000f;
 
-        //animation
-        currentWeapon.GetComponent<Animator>().Play("Attack", 0, 0);
-
-        //attackpoint
-        Transform attackPoint = currentWeapon.transform.Find("AttackPoint").transform;
-
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(attackPoint.position, currentWeaponData.range);
         foreach (Collider2D enemy in enemies)
         {
-            if (enemy.gameObject.layer == LayerMask.NameToLayer("EnemyHitbox"))
+            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distanceToEnemy < minimumDistance)
             {
-                enemy.gameObject.transform.root.GetComponent<IDamageable>()?.TakeDamage(currentWeaponData.damage);
+                closestEnemy = enemy.gameObject;
+                minimumDistance = distanceToEnemy;
             }
         }
-
-        //cooldown
-        currentCooldown = currentWeaponData.fireRate;
+        
+        return closestEnemy;
     }
 
     IEnumerator Reload()
@@ -294,7 +252,7 @@ public class WeaponManager : NetworkBehaviour
                 currentWeaponData.Reload();
                 hud.RefreshAmmo(currentWeaponData.GetAmmo());
             }
-            while (currentWeaponData.GetClip() != currentWeaponData.clipSize);
+            while (currentWeaponData.GetAmmo() != currentWeaponData.ammo);
         }
         else
         {
@@ -321,39 +279,6 @@ public class WeaponManager : NetworkBehaviour
         }
 
         muzzle.enabled = false;
-    }
-
-    IEnumerator QuickAttack()
-    {
-        int prevWeapon = selectedWeapon;
-        selectedWeapon = 2;
-        currentWeaponData = loadout[selectedWeapon];
-
-        if (currentWeapon != null)
-        {
-            if (isReloading) StopCoroutine(reload);
-            if (muzzle != null) StopCoroutine(muzzle);
-            if (equip != null) StopCoroutine(equip);
-            isReloading = false;
-            Destroy(currentWeapon);
-        }
-
-        GameObject newWeapon = Instantiate(loadout[2].prefab, weaponHolder) as GameObject;
-        currentWeapon = newWeapon;
-        newWeapon.transform.localPosition = loadout[2].prefab.transform.localPosition;
-        weaponPosition = newWeapon.transform.localPosition;
-
-        hud.RefreshAmmo(currentWeaponData.GetAmmo());
-
-        hud.SelectWeapon(selectedWeapon);
-
-        isEquipping = false;
-
-        Attack();
-
-        yield return new WaitForSeconds(currentCooldown);
-
-        equip = StartCoroutine(Equip(prevWeapon));
     }
 
     IEnumerator Burst()
@@ -405,7 +330,6 @@ public class WeaponManager : NetworkBehaviour
                     if (!currentWeaponData.FullAmmo())
                     {
                         pickedUp = true;
-                        currentWeaponData.AddMag();
                         hud.RefreshAmmo(currentWeaponData.GetAmmo());
                     }
                 }
@@ -417,5 +341,11 @@ public class WeaponManager : NetworkBehaviour
             Debug.Log("Picked up " + newItem.itemName);
             Destroy(sceneObject);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position, currentWeaponData.range);
     }
 }

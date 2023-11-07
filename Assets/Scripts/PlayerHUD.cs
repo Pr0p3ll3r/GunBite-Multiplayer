@@ -26,7 +26,6 @@ public class PlayerHUD : MonoBehaviour
     private TextMeshProUGUI moneyText;
     private GameObject vignette;
     private TextMeshProUGUI deadText;
-    private Transform weaponParent;
 
     private void Awake()
     {
@@ -51,7 +50,6 @@ public class PlayerHUD : MonoBehaviour
 
         //Bottom Right   
         ammo = GameObject.Find("HUD/Game/BottomRightCorner/Ammo/Amount").GetComponent<TextMeshProUGUI>();
-        weaponParent = GameObject.Find("HUD/Game/BottomRightCorner/Weapons").transform;
 
         //Exp Bar
         levelText = GameObject.Find("HUD/Game/ExpBar/LevelText").GetComponent<TextMeshProUGUI>();
@@ -154,38 +152,6 @@ public class PlayerHUD : MonoBehaviour
     {
         vignette.GetComponent<CanvasGroup>().alpha = 1f;
         deadText.text = "YOU ARE DEAD!";
-    }
-
-    public void RefreshWeapon(Weapon[] weapons)
-    {
-        foreach (Transform weapon in weaponParent)
-        {
-            Image icon = weapon.GetChild(0).GetComponent<Image>();
-            TextMeshProUGUI name = weapon.GetChild(1).GetComponent<TextMeshProUGUI>();
-            icon.sprite = emptyIcon;
-            name.text = "";
-        }
-
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (weapons[i] == null) continue;
-
-            Image icon = weaponParent.GetChild(i).GetChild(0).GetComponent<Image>();
-            TextMeshProUGUI name = weaponParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>();
-            icon.sprite = weapons[i].icon;
-            name.text = weapons[i].itemName;
-        }
-    }
-
-    public void SelectWeapon(int index)
-    {
-        foreach (Transform weapon in weaponParent)
-        {
-            Image background = weapon.GetComponent<Image>();
-            background.color = new Color32(0, 0, 0, 102);
-        }
-
-        weaponParent.GetChild(index).GetComponent<Image>().color = new Color32(255, 255, 255, 102);
     }
 
     public IEnumerator StaminaRestore(float cooldown)

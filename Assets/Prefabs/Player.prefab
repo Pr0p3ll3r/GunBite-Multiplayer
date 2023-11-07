@@ -398,7 +398,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 448777784789897024}
-  - component: {fileID: 6569434121093857850}
   m_Layer: 7
   m_Name: Weapon
   m_TagString: Untagged
@@ -421,51 +420,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1906102799169794351}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6569434121093857850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 448777784789897025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 2632791075328870898}
-  _networkObjectCache: {fileID: 0}
-  _componentConfiguration: 0
-  _synchronizeParent: 0
-  _packing:
-    Position: 1
-    Rotation: 1
-    Scale: 0
-  _interpolation: 2
-  _extrapolation: 2
-  _enableTeleport: 0
-  _teleportThreshold: 1
-  _scaleThreshold: 1
-  _clientAuthoritative: 1
-  _sendToOwner: 1
-  _enableNetworkLod: 1
-  _interval: 1
-  _synchronizePosition: 1
-  _positionSnapping:
-    X: 0
-    Y: 0
-    Z: 0
-  _synchronizeRotation: 1
-  _rotationSnapping:
-    X: 0
-    Y: 0
-    Z: 0
-  _synchronizeScale: 1
-  _scaleSnapping:
-    X: 0
-    Y: 0
-    Z: 0
 --- !u!1 &461456518729850617
 GameObject:
   m_ObjectHideFlags: 0
@@ -941,7 +895,6 @@ MonoBehaviour:
   maxHealth: 3
   currentHealth: 3
   currentArmor: 0
-  isDead: 0
   hurtSource: {fileID: 0}
   hurtSound: {fileID: 0}
   deathSound: {fileID: 0}
@@ -1011,15 +964,12 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 2632791075328870898}
   _networkObjectCache: {fileID: 2632791075328870898}
   loadout:
-  - {fileID: 11400000, guid: 3c1df7da234888049a6966dc32cc54ac, type: 2}
   - {fileID: 11400000, guid: f4a24d91e01acf54b82c95438f8c3a50, type: 2}
-  - {fileID: 11400000, guid: 620acef8ebca1be4ab395e9027fb4e12, type: 2}
   bulletPooler: {fileID: 0}
   currentWeapon: {fileID: 0}
   weaponHolder: {fileID: 448777784789897024}
   selectedWeapon: 0
   currentWeaponData: {fileID: 0}
-  emptyCase: {fileID: 0}
   sfx: {fileID: 5502395936946948382}
   weaponSound: {fileID: 7790195923748072345}
   isReloading: 0

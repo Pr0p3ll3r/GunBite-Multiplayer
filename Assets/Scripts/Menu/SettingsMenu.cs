@@ -99,8 +99,8 @@ public class SettingsMenu : MonoBehaviour
         vsyncToggle.isOn = isVSync;
         QualitySettings.vSyncCount = isVSync ? 1 : 0;
 
-        bool autoaim = PlayerPrefs.GetInt("AutoAim", 0) == 1;
-        showFpsToggle.isOn = autoaim;
+        bool autoaim = PlayerPrefs.GetInt("AutoAim", 1) == 1;
+        autoAimToggle.isOn = autoaim;
 
         #endregion
     }
@@ -149,6 +149,10 @@ public class SettingsMenu : MonoBehaviour
     public void AutoAim(bool isOn)
     {
         PlayerPrefs.SetInt("AutoAim", isOn ? 1 : 0);
+		if (Player.Instance)
+		{
+			Player.Instance.autoAim = isOn;
+        }
     }
 
     #endregion

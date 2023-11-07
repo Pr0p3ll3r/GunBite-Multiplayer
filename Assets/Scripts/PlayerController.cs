@@ -27,6 +27,7 @@ public class PlayerController : NetworkBehaviour
     private SpriteRenderer spriteRenderer;
     private PlayerHUD hud;
     private Camera cam;
+    private WeaponManager weaponManager;
 
     private void Start()
     {
@@ -35,6 +36,7 @@ public class PlayerController : NetworkBehaviour
         player = GetComponent<Player>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         hud = GetComponent<PlayerHUD>();
+        weaponManager = GetComponent<WeaponManager>();
         lastMove = new Vector2(1f, 0f);
         cam = Camera.main;
     }
@@ -43,7 +45,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        if (Pause.paused || player.isDead) return;
+        if (Pause.paused || player.IsDead) return;
 
         //input
         movement.x = Input.GetAxisRaw("Horizontal");
@@ -74,12 +76,22 @@ public class PlayerController : NetworkBehaviour
             spriteRenderer.flipX = false;
             ServerFlipPlayerSprite(false);
         }
-            
-        //weapon look at mouse position
-        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 aimDirection = (mousePos - weaponParent.position).normalized;
-        float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
-        weaponParent.eulerAngles = new Vector3(0, 0, angle);
+
+        float angle = 0;
+        if (!player.autoAim)
+        {
+            //weapon look at mouse position
+            mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 aimDirection = (mousePos - weaponParent.position).normalized;
+            angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+            weaponParent.eulerAngles = new Vector3(0, 0, angle);
+        }
+        else if (weaponManager.ClosestEnemy)
+        {
+            Vector2 aimDirection = (weaponManager.ClosestEnemy.transform.position - weaponParent.position).normalized;
+            angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+            weaponParent.eulerAngles = new Vector3(0, 0, angle);
+        }
 
         //weapon flip
         if (angle >= -90 && angle <= 90)
@@ -102,7 +114,21 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner) return;
 
         if (!isDashing)
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + moveSpeed * Time.fixedDeltaTime * movement);
+    }
+
+    private IEnumerator Dash(Vector2 direction)
+    {
+        isDashing = true;
+        canDash = false;
+        SoundManager.Instance.Play("Dash");
+        rb.AddForce(direction * dashDistance, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(dashDuration);
+        hud.StartCoroutine(hud.StaminaRestore(dashCooldown));
+        isDashing = false;
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 
     [ObserversRpc]
@@ -154,19 +180,5 @@ public class PlayerController : NetworkBehaviour
         {
             Physics2D.IgnoreCollision(collision.collider, collision.otherCollider, false);
         }
-    }
-
-    IEnumerator Dash(Vector2 direction)
-    {
-        isDashing = true;
-        canDash = false;
-        SoundManager.Instance.Play("Dash");
-        rb.AddForce(direction * dashDistance, ForceMode2D.Impulse);
-        yield return new WaitForSeconds(dashDuration);
-        hud.StartCoroutine(hud.StaminaRestore(dashCooldown));
-        isDashing = false;
-        rb.velocity = Vector2.zero;
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
     }
 }

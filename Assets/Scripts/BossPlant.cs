@@ -4,14 +4,7 @@ using UnityEngine;
 
 public class BossPlant : EnemyInfo, IDamageable
 {
-    private Transform player;
-    private Animator animator;
-    private GameObject healthBar;
-    private TextMeshProUGUI moneyReward;
-    private GameObject hitbox;
-
     [SerializeField] private ParticleSystem deathEffect;
-
     [SerializeField] private Transform spitPoint;
     [SerializeField] private float radius;
 
@@ -19,7 +12,11 @@ public class BossPlant : EnemyInfo, IDamageable
     private float lastAttackTime = 0;
     private bool isDead;
     private bool appear;
-
+    private Transform player;
+    private Animator animator;
+    private GameObject healthBar;
+    private TextMeshProUGUI moneyReward;
+    private GameObject hitbox;
     private ObjectPooler acidPooler;
 
     void Start()

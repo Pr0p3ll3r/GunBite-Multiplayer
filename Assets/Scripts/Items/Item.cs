@@ -13,12 +13,14 @@ public class Item : ScriptableObject
         Debug.Log("Used " + itemName);
     }
 
-    public void NewAsset(Item basic)
+    public virtual void Initialize()
     {
-        itemName = basic.itemName;
-        name = itemName;
-        itemType = basic.itemType;
-        pickUp = basic.pickUp;
+        
+    }
+
+    public virtual Item GetCopy()
+    {
+        return this;
     }
 }
 

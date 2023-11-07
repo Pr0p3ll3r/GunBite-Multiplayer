@@ -5,12 +5,11 @@ public class Weapon : Item
 {
     [Tooltip("0 - semi-auto, 1 - auto, 2 - burst")]
     public int firingMode;
-    [Tooltip("0 - secondary, 1 - primary, 2 - melee")]
+    [Tooltip("0 - secondary, 1 - primary")]
     public int type;
     public GameObject prefab;
     public int damage;
     public int ammo;
-    public int clipSize;
     public int pellets;
     public float pelletsSpread;
     public float range;
@@ -23,7 +22,6 @@ public class Weapon : Item
 
     [Header("Sounds")]
     public AudioClip equipSound;
-    public AudioClip slideSound;
     public AudioClip reloadSound;
     public AudioClip gunshotSound;
     public float pitchRandom;
@@ -34,34 +32,42 @@ public class Weapon : Item
     public float insertTime;
 
     [Header("SHOP")]
-    public bool canBeSold;
     public bool canBeUpgraded;
     public int startPrice;
     public int[] upgradePrices;
     public float damageMultiplier;
     public Sprite icon;
-    public int clipPrice;
 
     private int currentAmmo;
-    private int clip;
     private int currentDamage;
     private int currentTier;
     private bool currentUpgraded;
 
-    public void Initialize()
+    public int GetAmmo() { return currentAmmo; }
+    public int GetTier() { return currentTier; }
+    public int GetDamage() { return currentDamage; }
+    public bool CanStillBeUpgraded() { return currentUpgraded; }
+
+    public override void Initialize()
     {
         currentAmmo = ammo;
-        clip = clipSize;
         currentDamage = damage;
         currentTier = 0;
         currentUpgraded = canBeUpgraded;
     }
 
+    public override Item GetCopy()
+    {
+        Item weapon = Instantiate(this);
+        weapon.Initialize();
+        return weapon;
+    }
+
     public bool FireBullet()
     {
-        if (clip > 0)
+        if (currentAmmo > 0)
         {
-            clip -= 1;
+            currentAmmo -= 1;
             return true;
         }
         else return false;
@@ -69,9 +75,9 @@ public class Weapon : Item
 
     public bool FireBurst()
     {
-        if (clip >= 3)
+        if (currentAmmo >= 3)
         {
-            clip -= 3;
+            currentAmmo -= 3;
             return true;
         }
         else return false;
@@ -79,63 +85,19 @@ public class Weapon : Item
 
     public void Reload()
     {
-        if(insert)
+        if (insert)
         {
-            clip += 1;
             currentAmmo -= 1;
         }
         else
         {
-            currentAmmo += clip;
-            clip = Mathf.Min(clipSize, currentAmmo);
-            currentAmmo -= clip;
+            currentAmmo = ammo;
         }
-    }
-
-    public bool OutOfAmmo()
-    {
-        if (clipSize != clip && currentAmmo != 0)
-            return true;
-        else
-            return false;
-    }
-
-    public int GetClip() { return clip; }
-    public int GetAmmo() { return currentAmmo; }
-    public int GetTier() { return currentTier; }
-    public int GetDamage() { return currentDamage; }
-    public int GetSellPrice() 
-    {
-        int sellPrice;
-        sellPrice = startPrice;
-        for (int i = 0; i < currentTier; i++)
-        {
-            sellPrice += upgradePrices[i]; 
-        }
-        sellPrice /= 2;
-        return sellPrice;
-    }
-    public bool CanStillBeUpgraded() { return currentUpgraded; }
-
-    public void AddMag()
-    {
-        int remainFromClip = clipSize;
-        clip = clipSize;
-        currentAmmo += remainFromClip;
-        currentAmmo = Mathf.Min(currentAmmo, ammo);
     }
 
     public void Refill()
     {
         currentAmmo = ammo;
-        clip = clipSize;
-    }
-
-    public int GetRefillPrice()
-    {
-        float remainMags = (float)(ammo - currentAmmo) / (float)clipSize;
-        remainMags = Mathf.Ceil(remainMags);
-        return (int)remainMags * clipPrice;
     }
 
     public void Upgrade()
@@ -146,9 +108,19 @@ public class Weapon : Item
             currentUpgraded = false;
     }
 
+    public bool OutOfAmmo()
+    {
+        if (currentAmmo <= 0)
+            return true;
+        else
+            return false;
+    }
+
     public bool FullAmmo()
     {
-        if (currentAmmo == ammo) return true;
-        else return false;
+        if (currentAmmo == ammo)
+            return true;
+        else
+            return false;
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ItemPickup : MonoBehaviour 
 {
@@ -12,10 +11,8 @@ public class ItemPickup : MonoBehaviour
         switch (item.itemType)
         {
 			case ItemType.Weapon:
-				Weapon newWeapon = ScriptableObject.CreateInstance<Weapon>();
-				newWeapon.NewAsset((Weapon)item);
-				item = newWeapon;
-				break;
+                item = (Weapon)item.GetCopy();
+                break;
 		}
     }
 

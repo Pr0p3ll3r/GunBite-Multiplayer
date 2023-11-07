@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class Loot
@@ -10,14 +8,12 @@ public static class Loot
 
         if (lootBasic.item.GetType() == typeof(Weapon))
         {
-            Weapon weapon = ScriptableObject.CreateInstance<Weapon>();
-            weapon.NewAsset(lootBasic.item);
+            Weapon weapon = (Weapon)lootBasic.item.GetCopy();
             return weapon;
         }
         else
         {
-            Item item = ScriptableObject.CreateInstance<Item>();
-            item.NewAsset(lootBasic.item);
+            Item item = lootBasic.item.GetCopy();
             return item;
         }
     }

@@ -12,12 +12,15 @@ public class Player : NetworkBehaviour, IDamageable
     public int maxHealth = 4;
     public int currentHealth;
     public int currentArmor;
-    public bool isDead;
+
+    private bool isDead;
+    public bool IsDead => isDead;
+    public bool autoAim;
+
     [SerializeField] private AudioSource hurtSource;
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip deathSound;
-    private GameManager gameManager;
-    private WeaponManager wm;
+    private WeaponManager weaponManager;
     private PlayerController playerController;
     public TextMeshPro playerNickname;
 
@@ -33,13 +36,14 @@ public class Player : NetworkBehaviour, IDamageable
     {
         playerController = GetComponent<PlayerController>();
         hud = GetComponent<PlayerHUD>();
-        wm = GetComponent<WeaponManager>();
+        weaponManager = GetComponent<WeaponManager>();
         ls = GetComponent<LevelSystem>();
         ms = GetComponent<MoneySystem>();
         animator = GetComponent<Animator>();
         pause = GameObject.Find("HUD/PauseMenu").GetComponent<Pause>();
         currentHealth = maxHealth;
         hud.RefreshBars(currentHealth, maxHealth, currentArmor);
+        autoAim = PlayerPrefs.GetInt("AutoAim", 1) == 1;
     }
 
     void Update()
@@ -100,10 +104,7 @@ public class Player : NetworkBehaviour, IDamageable
     [ObserversRpc]
     void Die()
     {
-        if (PlayerPrefs.GetInt("Extra") == 1)
-            SoundManager.Instance.Play("PlayerDeathExtra");
-        else
-            SoundManager.Instance.Play("PlayerDeath");
+        SoundManager.Instance.Play("PlayerDeath");
         isDead = true;
         Instantiate(deathEffect, transform.position, Quaternion.identity);
         hud.ShowDeadText();
@@ -131,8 +132,8 @@ public class Player : NetworkBehaviour, IDamageable
 
     public void Control(bool status)
     {
-        GetComponent<PlayerController>().enabled = status;
-        GetComponent<WeaponManager>().enabled = status;
+        playerController.enabled = status;
+        weaponManager.enabled = status;
     }
 
     public void DisableInvincible()

@@ -6,17 +6,17 @@ public class BossHead : EnemyInfo, IDamageable
 {
     [SerializeField] private ParticleSystem deathEffect;
 
+    private int currentHealth;
+    private float lastAttackTime = 0;
+    private bool isDead;
+    private bool attack;
+
     private Transform player;
     private Animator animator;
     private GameObject healthBar;
     private TextMeshProUGUI moneyReward;
     private GameObject hitbox;
     private Rigidbody2D rb;
-
-    private int currentHealth;
-    private float lastAttackTime = 0;
-    private bool isDead;
-    private bool attack;
 
     void Start()
     {
