@@ -22,6 +22,12 @@ public class Pause : MonoBehaviour
         settingsMenu.SetActive(true);
     }
 
+    public void ReturnToPause()
+    {
+        pauseMenu.SetActive(true);
+        settingsMenu.SetActive(false);
+    }
+
     public void ReturnToMenu()
     {
         TooglePause();
